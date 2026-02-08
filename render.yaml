@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: spotfinder-backend
+    env: node
+    plan: free
+    rootDir: ./
+    buildCommand: cd spotfinder-backend && npm install
+    startCommand: cd spotfinder-backend && npm start
+    # Note: Environment variables should be set in Render dashboard
+    # Required: SUPABASE_URL, SUPABASE_KEY, JWT_SECRET, FRONTEND_URL

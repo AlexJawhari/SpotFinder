@@ -1,0 +1,318 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Frutiger Aero + Y2K Futurism Color Palette - Inspired by frutigeraeroarchive.org */
+  --color-primary: #4FC3F7; /* Vibrant sky blue - Windows Vista style */
+  --color-secondary: #66BB6A; /* Nature green - grass and nature */
+  --color-accent: #F9A8D4; /* Blush pink - romantic and warm */
+  --color-tertiary: #FFD54F; /* Bright yellow - sunshine */
+  --color-aqua: #26C6DA; /* Aqua blue - Y2K futurism */
+  --color-background: #E8F5E9; /* Light green tint - nature */
+  --color-surface: #FFFFFF;
+  --color-text: #1A237E; /* Deep blue - readable */
+  --color-text-light: #546E7A; /* Muted blue-gray */
+  --color-border: #B2DFDB; /* Soft teal border */
+  
+  /* Gradient Colors - Y2K Futurism + Frutiger Aero */
+  --gradient-primary: linear-gradient(135deg, #4FC3F7 0%, #66BB6A 100%);
+  --gradient-aqua: linear-gradient(135deg, #26C6DA 0%, #4FC3F7 100%);
+  --gradient-nature: linear-gradient(135deg, #66BB6A 0%, #4FC3F7 50%, #26C6DA 100%);
+  --gradient-romantic: linear-gradient(135deg, #F9A8D4 0%, #FFD54F 100%);
+  --gradient-vista: linear-gradient(to bottom, #E3F2FD 0%, #BBDEFB 50%, #90CAF9 100%);
+
+  /* Spacing */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+
+  /* Border Radius */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: var(--color-text);
+  /* Frutiger Aero background - green-tinted with nature feel */
+  background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 25%, #A5D6A7 50%, #81C784 75%, #E8F5E9 100%);
+  background-size: 400% 400%;
+  background-attachment: fixed;
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+  /* Optimize for performance */
+  will-change: background-position;
+  transform: translateZ(0); /* Force GPU acceleration */
+}
+
+/* Frutiger Aero animated background - Optimized with GPU acceleration */
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Only animate if user prefers motion */
+@media (prefers-reduced-motion: no-preference) {
+  body {
+    animation: gradientShift 20s ease infinite;
+  }
+}
+
+/* Organic floating shapes - Bubbles and nature elements. Stay behind all content. */
+body::before {
+  content: '';
+  position: fixed;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: 
+    radial-gradient(circle at 20% 50%, rgba(79, 195, 247, 0.06) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(102, 187, 106, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 40% 20%, rgba(38, 198, 218, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 60% 70%, rgba(102, 187, 106, 0.04) 0%, transparent 40%);
+  pointer-events: none;
+  z-index: -1;
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    radial-gradient(circle at 10% 20%, rgba(102, 187, 106, 0.03) 0%, transparent 30%),
+    radial-gradient(circle at 90% 80%, rgba(79, 195, 247, 0.02) 0%, transparent 30%);
+  pointer-events: none;
+  z-index: -1;
+  transform: translateZ(0);
+}
+
+/* Web 2.0 Gloss - Shine animation */
+@keyframes shine {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}
+
+.animate-shine {
+  animation: shine 0.6s ease-in-out;
+}
+
+/* Radial gradient utility */
+.bg-gradient-radial {
+  background: radial-gradient(circle, var(--tw-gradient-stops));
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+/* Utility Classes */
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+/* Scrollbar Styling - Frutiger Aero themed */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #7DD3FC 0%, #86EFAC 100%);
+  border-radius: 10px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #86EFAC 0%, #7DD3FC 100%);
+}
+
+/* Line Clamp Utility */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Smooth Transitions */
+.transition-smooth {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Focus Ring */
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Loading Animation */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Fade In Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Hover Effects - Optimized with GPU acceleration */
+.hover-lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+.hover-lift:hover {
+  transform: translate3d(0, -2px, 0);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Badge Styles */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.badge-primary {
+  background-color: #DBEAFE;
+  color: #1E40AF;
+}
+
+.badge-success {
+  background-color: #D1FAE5;
+  color: #065F46;
+}
+
+.badge-warning {
+  background-color: #FEF3C7;
+  color: #92400E;
+}
+
+/* Card Styles - Frutiger Aero / Windows Vista style */
+.card {
+  background: var(--color-surface);
+  border-radius: 24px;
+  box-shadow: 0 4px 20px rgba(79, 195, 247, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.5);
+  padding: var(--spacing-lg);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 2px solid rgba(178, 223, 219, 0.5);
+  backdrop-filter: blur(10px);
+}
+
+.card:hover {
+  box-shadow: 0 8px 30px rgba(125, 211, 252, 0.25);
+  transform: translateY(-2px);
+}
+
+/* Button Styles */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-md);
+  font-weight: 500;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  border: none;
+}
+
+.btn-primary {
+  background: var(--gradient-primary);
+  color: white;
+  border: none;
+  box-shadow: 0 4px 15px rgba(125, 211, 252, 0.3);
+}
+
+.btn-primary:hover {
+  box-shadow: 0 6px 20px rgba(125, 211, 252, 0.4);
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  background: var(--gradient-romantic);
+  color: white;
+  border: none;
+  box-shadow: 0 4px 15px rgba(249, 168, 212, 0.3);
+}
+
+.btn-secondary:hover {
+  box-shadow: 0 6px 20px rgba(249, 168, 212, 0.4);
+  transform: translateY(-1px);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .container {
+    padding: 0 0.75rem;
+  }
+}
