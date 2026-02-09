@@ -18,15 +18,23 @@ async function getLocationFromIP(clientIp) {
     try {
         // Service 1: ipapi.co (HTTPS, JSON)
         try {
-            const url = (clientIp && !isPrivateIp(clientIp)) ? `https://ipapi.co/${clientIp}/json/` : 'https://ipapi.co/json/';
+            // Only append IP if it's public. If private/null, let the API detect the caller's IP (server IP)
+            // But for a user app, server IP (Oregon) is useless. We want the client IP.
+            // If we have a private IP here, it means express trust proxy failed to get the real one.
+            // In that case, we might as well return default (Dallas) rather than Server IP (Oregon).
+            if (clientIp && isPrivateIp(clientIp)) {
+                console.warn('Private IP detected in geolocation service. Returning default.');
+                return getDefaultLocation();
+            }
+
+            const url = clientIp ? `https://ipapi.co/${clientIp}/json/` : 'https://ipapi.co/json/';
             const response = await axios.get(url, {
                 headers: { 'User-Agent': 'SpotFinder-Student-App/1.0' },
-                timeout: 3000 // Short timeout to fail fast
+                timeout: 3000
             });
 
             const data = response.data;
             if (isValidLocation(data)) {
-                // The original code had a US check here. Now formatLocation will handle it.
                 const formatted = formatLocation(data);
                 if (isUSLocation(formatted.latitude, formatted.longitude, formatted.country)) {
                     return formatted;
@@ -36,11 +44,33 @@ async function getLocationFromIP(clientIp) {
             console.warn(`ipapi.co failed (${e.message}). Trying fallback...`);
         }
 
-        // Service 2: ip-api.com (HTTP, JSON)
+        // Service 2: ipwho.is (Free, no key)
         try {
+            const url = clientIp ? `http://ipwho.is/${clientIp}` : 'http://ipwho.is/';
+            const response = await axios.get(url, { timeout: 3000 });
+            const data = response.data;
+
+            if (data.success && data.latitude && data.longitude) {
+                if (isUSLocation(data.latitude, data.longitude, data.country_code)) {
+                    return {
+                        latitude: data.latitude,
+                        longitude: data.longitude,
+                        city: data.city || 'Unknown',
+                        state: data.region || 'Unknown',
+                        country: data.country_code || 'US'
+                    };
+                }
+            }
+        } catch (e) {
+            console.warn(`ipwho.is failed (${e.message}). Trying fallback...`);
+        }
+
+        // Service 3: ip-api.com (HTTP, JSON)
+        try {
+            // ... existing ip-api code ...
             const baseUrl = 'http://ip-api.com/json/';
             const query = '?fields=status,message,country,countryCode,region,regionName,city,lat,lon';
-            const finalUrl = (clientIp && !isPrivateIp(clientIp)) ? `${baseUrl}${clientIp}${query}` : `${baseUrl}${query}`;
+            const finalUrl = clientIp ? `${baseUrl}${clientIp}${query}` : `${baseUrl}${query}`;
 
             const response = await axios.get(finalUrl, {
                 headers: { 'User-Agent': 'SpotFinder-Student-App/1.0' },

@@ -7,6 +7,10 @@ const router = express.Router();
 router.get('/ip-location', async (req, res) => {
     try {
         const clientIp = req.ip || req.connection?.remoteAddress || null;
+        // Debug logging for Render
+        console.log('Detected IP:', clientIp);
+        console.log('X-Forwarded-For:', req.headers['x-forwarded-for']);
+
         const location = await getLocationFromIP(clientIp);
         res.json(location);
     } catch (error) {
