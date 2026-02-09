@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+import { FaUsers, FaMapMarkerAlt, FaLock } from 'react-icons/fa';
 import ModerationControls from '../common/ModerationControls';
 
 const GroupCard = ({ group, onJoin, isMember, onDelete }) => {
