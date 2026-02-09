@@ -9,10 +9,17 @@ const axios = require('axios');
  */
 async function getLocationFromIP(clientIp) {
     // Handle localhost/private IPs explicitly to avoid wasted API calls
-    if (clientIp === '::1' || clientIp === '127.0.0.1' || clientIp?.startsWith('192.168.') || clientIp?.startsWith('10.')) {
-        console.log('Local/Private IP detected:', clientIp);
-        // We could return null here to let the frontend ask for browser geolocation, 
-        // but for now we'll return a default so the map works.
+    if (!clientIp || isPrivateIp(clientIp)) {
+        console.log('Local/Private IP detected, attempting public IP fallback...');
+        try {
+            const ipifyRes = await axios.get('https://api.ipify.org?format=json', { timeout: 2000 });
+            if (ipifyRes.data && ipifyRes.data.ip) {
+                console.log('Public IP detected for fallback:', ipifyRes.data.ip);
+                clientIp = ipifyRes.data.ip;
+            }
+        } catch (e) {
+            console.warn('Public IP fallback failed, using defaults.');
+        }
     }
 
     try {

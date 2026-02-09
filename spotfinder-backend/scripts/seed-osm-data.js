@@ -82,9 +82,9 @@ async function getSystemUserId() {
         // If email exists with diff username, fetch it
         if (error.code === '23505') {
             const { data: existing } = await supabase.from('users').select('id').eq('email', 'system@spotfinder.app').single();
-            return existing.id;
+            return existing ? existing.id : null;
         }
-        console.error('Failed to create system user:', error);
+        console.warn('⚠️ Row Level Security (RLS) is likely blocking system user creation. Locations will be created without a created_by link.');
         return null;
     }
 
@@ -97,8 +97,7 @@ async function seedData() {
 
     const systemUserId = await getSystemUserId();
     if (!systemUserId) {
-        console.error('❌ Could not get system user ID. Aborting.');
-        return;
+        console.warn('⚠️ No system user found. Locations will be untracked.');
     }
 
     const CITIES = [
@@ -162,9 +161,12 @@ async function seedData() {
                     longitude: lon,
                     category: cat.type,
                     amenities: cat.amenities,
-                    created_by: systemUserId,
                     images: [`https://loremflickr.com/800/600/${imageKeyword},building?lock=${Math.floor(Math.random() * 1000)}`]
                 };
+
+                if (systemUserId) {
+                    location.created_by = systemUserId;
+                }
 
                 const { error: insertError } = await supabase
                     .from('locations')

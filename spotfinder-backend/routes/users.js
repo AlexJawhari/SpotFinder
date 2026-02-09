@@ -8,6 +8,7 @@ router.get('/profile', protect, userController.getProfile);
 router.get('/profile/:userId', userController.getProfile);
 router.put('/profile', protect, userController.updateProfile);
 router.put('/settings', protect, userController.updateAccountSettings);
+router.delete('/account', protect, userController.deleteAccount);
 
 // Follow routes
 router.post('/:userId/follow', protect, userController.followUser);

@@ -6,7 +6,7 @@ const ModerationControls = ({ creatorId, onDelete, resourceName = 'item' }) => {
 
     if (!user) return null;
 
-    const isAdmin = user.email === 'alexjw99@gmail.com' || user.isAdmin === true;
+    const isAdmin = user.email === 'alexjw99@gmail.com' || user.email === 'admin@gmail.com' || user.isAdmin === true;
     const isCreator = user.id === creatorId;
 
     if (!isAdmin && !isCreator) {

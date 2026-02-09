@@ -20,6 +20,12 @@ export const userService = {
         return data;
     },
 
+    // Delete account
+    deleteAccount: async () => {
+        const { data } = await api.delete('/profile/account');
+        return data;
+    },
+
     // Follow user
     followUser: async (userId) => {
         const { data } = await api.post(`/profile/${userId}/follow`);

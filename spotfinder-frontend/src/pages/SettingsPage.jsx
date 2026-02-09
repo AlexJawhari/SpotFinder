@@ -4,13 +4,14 @@ import { toast } from 'react-toastify';
 import { userService } from '../services/userService';
 import { useAuthStore } from '../store/authStore';
 import LoadingSpinner from '../components/common/LoadingSpinner';
-import { FaUser, FaLock, FaGlobe, FaSlidersH, FaHistory } from 'react-icons/fa';
+import { FaUser, FaLock, FaGlobe, FaSlidersH, FaHistory, FaExclamationTriangle } from 'react-icons/fa';
 
 const SettingsPage = () => {
-    const { user, setUser } = useAuthStore();
+    const { user, setUser, logout } = useAuthStore();
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
+    const [deleting, setDeleting] = useState(false);
     const [activeSection, setActiveSection] = useState('profile');
 
     const [formData, setFormData] = useState({
@@ -76,6 +77,22 @@ const SettingsPage = () => {
         }
     };
 
+    const handleDeleteAccount = async () => {
+        if (window.confirm('CRITICAL: Are you sure you want to permanently delete your account? This will remove all your spots, reviews, and favorites. This cannot be undone.')) {
+            setDeleting(true);
+            try {
+                await userService.deleteAccount();
+                toast.success('Account deleted successfully');
+                logout();
+                navigate('/');
+            } catch (error) {
+                toast.error('Failed to delete account');
+            } finally {
+                setDeleting(false);
+            }
+        }
+    };
+
     if (loading) return <LoadingSpinner fullPage />;
 
     const sections = [
@@ -98,8 +115,8 @@ const SettingsPage = () => {
                                 key={section.id}
                                 onClick={() => setActiveSection(section.id)}
                                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all ${activeSection === section.id
-                                        ? 'bg-blue-600 text-white shadow-lg shadow-blue-200'
-                                        : 'text-slate-600 hover:bg-white hover:text-blue-600'
+                                    ? 'bg-blue-600 text-white shadow-lg shadow-blue-200'
+                                    : 'text-slate-600 hover:bg-white hover:text-blue-600'
                                     }`}
                             >
                                 {section.icon}
@@ -151,7 +168,7 @@ const SettingsPage = () => {
                                         <p className="text-sm text-slate-500">Manage your private account information.</p>
                                     </div>
 
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-6 border-b border-slate-100">
                                         <div className="space-y-2">
                                             <label className="text-sm font-semibold text-slate-700">Username</label>
                                             <input
@@ -171,6 +188,23 @@ const SettingsPage = () => {
                                                 className="w-full px-4 py-3 rounded-xl border border-slate-100 bg-slate-50 text-slate-400 cursor-not-allowed outline-none"
                                             />
                                         </div>
+                                    </div>
+
+                                    {/* Danger Zone */}
+                                    <div className="bg-red-50 rounded-2xl p-6 border border-red-100">
+                                        <div className="flex items-center gap-3 text-red-700 font-bold mb-2">
+                                            <FaExclamationTriangle />
+                                            <h4>Danger Zone</h4>
+                                        </div>
+                                        <p className="text-sm text-red-600 mb-4 font-medium">Once you delete your account, there is no going back. Please be certain.</p>
+                                        <button
+                                            type="button"
+                                            onClick={handleDeleteAccount}
+                                            disabled={deleting}
+                                            className="px-6 py-2 bg-white border border-red-200 text-red-600 rounded-lg font-bold hover:bg-red-600 hover:text-white transition-all shadow-sm"
+                                        >
+                                            {deleting ? 'Deleting...' : 'Delete Account'}
+                                        </button>
                                     </div>
                                 </div>
                             )}

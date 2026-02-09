@@ -255,3 +255,24 @@ exports.getUserReviews = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
+
+// Delete user account
+exports.deleteAccount = async (req, res) => {
+    try {
+        const userId = req.user.id;
+
+        // Note: CASCADE should handle user_profiles, user_follows, reviews, etc.
+        // But auth.users is separate from our public.users table in some setups.
+        // In our schema, we use public.users.
+        const { error } = await supabase
+            .from('users')
+            .delete()
+            .eq('id', userId);
+
+        if (error) throw error;
+
+        res.json({ message: 'Account deleted successfully' });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
