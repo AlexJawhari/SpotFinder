@@ -1,10 +1,9 @@
 import { MapContainer, TileLayer, Marker, Popup, useMap, useMapEvents } from 'react-leaflet';
 import { useEffect, useMemo } from 'react';
 import 'leaflet/dist/leaflet.css';
-import 'react-leaflet-cluster/dist/assets/MarkerCluster.css';
-import 'react-leaflet-cluster/dist/assets/MarkerCluster.Default.css';
+
 import L from 'leaflet';
-import MarkerClusterGroup from 'react-leaflet-cluster';
+
 import { DEFAULT_MAP_CENTER, MAP_ZOOM } from '../../utils/constants';
 
 // Explicit divIcon for markers – avoids L.Icon.Default / createIcon issues with react-leaflet-cluster
@@ -122,15 +121,15 @@ const MapView = ({ locations = [], onMarkerClick, center, zoom, selectedLocation
 
     const validLocations = locations.filter(loc => {
         if (!loc.latitude || !loc.longitude) return false;
-        
+
         const lat = parseFloat(loc.latitude);
         const lng = parseFloat(loc.longitude);
-        
+
         if (isNaN(lat) || isNaN(lng)) return false;
-        
+
         // Only show US locations
         return lat >= US_BBOX.south && lat <= US_BBOX.north &&
-               lng >= US_BBOX.west && lng <= US_BBOX.east;
+            lng >= US_BBOX.west && lng <= US_BBOX.east;
     });
 
     return (
@@ -153,35 +152,29 @@ const MapView = ({ locations = [], onMarkerClick, center, zoom, selectedLocation
             <ChangeView center={targetCenter} zoom={zoom} />
             <ViewportEvents onViewportChanged={onViewportChanged} />
 
-            <MarkerClusterGroup
-                chunkedLoading
-                spiderfyOnMaxZoom={true}
-                showCoverageOnHover={false}
-                zoomToBoundsOnClick={true}
-            >
-                {validLocations.map((location) => (
-                    <Marker
-                        key={location.id}
-                        position={[parseFloat(location.latitude), parseFloat(location.longitude)]}
-                        icon={location.id === selectedLocationId ? selectedPinIcon : defaultPinIcon}
-                        eventHandlers={{
-                            click: () => onMarkerClick && onMarkerClick(location),
-                        }}
-                    >
-                        <Popup>
-                            <div className="text-center min-w-[150px]">
-                                <h3 className="font-semibold text-sm mb-1">{location.name}</h3>
-                                <p className="text-xs text-gray-600 capitalize">{location.category || 'Location'}</p>
-                                {location.is_external && (
-                                    <span className="inline-block mt-1 px-2 py-0.5 text-xs bg-blue-100 text-blue-700 rounded">
-                                        External
-                                    </span>
-                                )}
-                            </div>
-                        </Popup>
-                    </Marker>
-                ))}
-            </MarkerClusterGroup>
+            {/* MarkerClusterGroup removed due to incompatibility with react-leaflet v5 causing crashes */}
+            {validLocations.map((location) => (
+                <Marker
+                    key={location.id}
+                    position={[parseFloat(location.latitude), parseFloat(location.longitude)]}
+                    icon={location.id === selectedLocationId ? selectedPinIcon : defaultPinIcon}
+                    eventHandlers={{
+                        click: () => onMarkerClick && onMarkerClick(location),
+                    }}
+                >
+                    <Popup>
+                        <div className="text-center min-w-[150px]">
+                            <h3 className="font-semibold text-sm mb-1">{location.name}</h3>
+                            <p className="text-xs text-gray-600 capitalize">{location.category || 'Location'}</p>
+                            {location.is_external && (
+                                <span className="inline-block mt-1 px-2 py-0.5 text-xs bg-blue-100 text-blue-700 rounded">
+                                    External
+                                </span>
+                            )}
+                        </div>
+                    </Popup>
+                </Marker>
+            ))}
         </MapContainer>
     );
 };
