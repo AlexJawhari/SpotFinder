@@ -1,3 +1,6 @@
+import { Link } from 'react-router-dom';
+import { format } from 'date-fns';
+import { FaArrowUp, FaArrowDown, FaMapMarkerAlt, FaComment } from 'react-icons/fa';
 import ModerationControls from '../common/ModerationControls';
 
 const PostCard = ({ post, onVote, userVote, onDelete }) => {
