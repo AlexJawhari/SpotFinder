@@ -190,6 +190,12 @@ exports.deleteGroup = async (req, res) => {
             return res.status(403).json({ error: 'Not authorized' });
         }
 
+        // Clean up members first to avoid FK constraint issues if cascade is not set
+        await supabase
+            .from('group_members')
+            .delete()
+            .eq('group_id', req.params.id);
+
         const { error } = await supabase
             .from('groups')
             .delete()

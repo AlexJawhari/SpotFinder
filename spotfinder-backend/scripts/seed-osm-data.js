@@ -114,7 +114,10 @@ async function seedData() {
         { type: 'restaurant', key: 'amenity', value: 'restaurant', amenities: ['food', 'dining', 'family_friendly'] },
         { type: 'bar', key: 'amenity', value: 'pub', amenities: ['alcohol', 'music', 'social'] },
         { type: 'gym', key: 'leisure', value: 'fitness_centre', amenities: ['gym', 'shower', 'equipment'] },
-        { type: 'coworking', key: 'amenity', value: 'coworking_space', amenities: ['wifi', 'desk', 'meeting_room'] }
+        { type: 'coworking', key: 'amenity', value: 'coworking_space', amenities: ['wifi', 'desk', 'meeting_room'] },
+        { type: 'music', key: 'amenity', value: 'music_venue', amenities: ['music', 'drinks', 'live_performance'] },
+        { type: 'art', key: 'amenity', value: 'arts_centre', amenities: ['art', 'culture', 'exhibition'] },
+        { type: 'cinema', key: 'amenity', value: 'cinema', amenities: ['movies', 'popcorn', 'entertainment'] }
     ];
 
     let totalInserted = 0;
@@ -123,8 +126,8 @@ async function seedData() {
         console.log(`\n📍 Processing ${city}...`);
 
         for (const cat of CATEGORIES) {
-            // Increased limit to 20 per category per city
-            const places = await fetchOverpassData(city, cat.type, cat.key, cat.value, 20);
+            // Increased limit to 50 per category per city for high density
+            const places = await fetchOverpassData(city, cat.type, cat.key, cat.value, 50);
             console.log(`   Found ${places.length} ${cat.type}s`);
 
             for (const place of places) {

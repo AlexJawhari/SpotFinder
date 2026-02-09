@@ -232,15 +232,56 @@ const MapView = ({ locations = [], onMarkerClick, center, zoom, selectedLocation
                         click: () => onMarkerClick && onMarkerClick(location),
                     }}
                 >
-                    <Popup>
-                        <div className="text-center min-w-[150px]">
-                            <h3 className="font-semibold text-sm mb-1">{location.name}</h3>
-                            <p className="text-xs text-gray-600 capitalize">{location.category || 'Location'}</p>
-                            {location.is_external && (
-                                <span className="inline-block mt-1 px-2 py-0.5 text-xs bg-blue-100 text-blue-700 rounded">
-                                    External
-                                </span>
+                    <Popup className="custom-popup">
+                        <div className="w-64 overflow-hidden rounded-xl bg-white shadow-xl border border-slate-100">
+                            {location.images && location.images.length > 0 ? (
+                                <img
+                                    src={location.images[0]}
+                                    alt={location.name}
+                                    className="w-full h-32 object-cover"
+                                />
+                            ) : (
+                                <div className="w-full h-32 bg-gradient-to-br from-blue-400 to-emerald-400 flex items-center justify-center">
+                                    <span className="text-4xl">📍</span>
+                                </div>
                             )}
+                            <div className="p-4">
+                                <div className="flex justify-between items-start mb-2">
+                                    <h3 className="font-bold text-slate-900 text-lg leading-tight line-clamp-1">{location.name}</h3>
+                                    <span className="text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-600 px-2 py-0.5 rounded">
+                                        {location.category}
+                                    </span>
+                                </div>
+
+                                <p className="text-xs text-slate-600 line-clamp-2 mb-3 leading-relaxed">
+                                    {location.description || 'No description available'}
+                                </p>
+
+                                <div className="flex items-center justify-between mt-4">
+                                    {location.average_rating > 0 && (
+                                        <div className="flex items-center gap-1 text-amber-500 font-bold text-xs">
+                                            <span>★</span> {location.average_rating.toFixed(1)}
+                                        </div>
+                                    )}
+                                    <a
+                                        href={`/location/${location.id}`}
+                                        className="text-xs font-bold text-blue-500 hover:text-blue-600 flex items-center gap-1 transition-colors"
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            // Handle internal routing if necessary, or just rely on the link
+                                            window.location.href = `/location/${location.id}`;
+                                        }}
+                                    >
+                                        View Details →
+                                    </a>
+                                </div>
+
+                                {location.is_external && (
+                                    <div className="mt-2 pt-2 border-t border-slate-50 text-[10px] text-slate-400 italic">
+                                        🌐 Found via OpenStreetMap
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </Popup>
                 </Marker>
