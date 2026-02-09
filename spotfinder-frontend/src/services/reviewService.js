@@ -30,4 +30,9 @@ export const reviewService = {
         const response = await api.post(`/reviews/${id}/vote`, { vote_type: voteType });
         return response.data;
     },
+
+    // Upload image
+    uploadImage: async (file) => {
+        return api.uploadImage(file);
+    },
 };
