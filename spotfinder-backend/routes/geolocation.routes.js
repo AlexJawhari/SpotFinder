@@ -4,6 +4,21 @@ const { getLocationFromIP } = require('../utils/ipGeolocation');
 
 const router = express.Router();
 
+function isPrivateIp(ip) {
+    if (!ip) return true;
+    return ip === '::1' || ip === '127.0.0.1' || ip.startsWith('192.168.') || ip.startsWith('10.') || ip.startsWith('::ffff:127.0.0.1');
+}
+
+function getDefaultLocation() {
+    return {
+        latitude: 32.7767,
+        longitude: -96.7970,
+        city: 'Dallas',
+        state: 'Texas',
+        country: 'US'
+    };
+}
+
 router.get('/ip-location', async (req, res) => {
     try {
         let clientIp = req.ip;

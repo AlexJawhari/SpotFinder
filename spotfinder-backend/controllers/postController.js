@@ -186,7 +186,7 @@ exports.deletePost = async (req, res) => {
             .single();
 
         const isCreator = post && post.created_by === req.user.id;
-        const isAdmin = req.user.email === 'alexjw99@gmail.com' || req.user.isAdmin === true;
+        const isAdmin = req.user.email === 'alexjw99@gmail.com' || req.user.email === 'admin@gmail.com' || req.user.isAdmin === true;
 
         if (!isCreator && !isAdmin) {
             return res.status(403).json({ error: 'Not authorized' });

@@ -109,7 +109,7 @@ const deleteReview = async (req, res, next) => {
       return res.status(404).json({ error: 'Review not found' });
     }
 
-    const isAdmin = req.user.email === 'alexjw99@gmail.com' || req.user.isAdmin === true;
+    const isAdmin = req.user.email === 'alexjw99@gmail.com' || req.user.email === 'admin@gmail.com' || req.user.isAdmin === true;
 
     if (review.user_id !== userId && !isAdmin) {
       return res.status(403).json({ error: 'Not authorized to delete this review' });

@@ -9,7 +9,7 @@ exports.getProfile = async (req, res) => {
             .from('user_profiles')
             .select(`
         *,
-        user:auth.users!user_profiles_user_id_fkey(id, username, email),
+        user:users(id, username, email),
         badges:user_badges(*)
       `)
             .eq('user_id', user_id)
