@@ -34,7 +34,39 @@ exports.getProfile = async (req, res) => {
     }
 };
 
-// Update user profile
+// Update user account settings (base user table)
+exports.updateAccountSettings = async (req, res) => {
+    try {
+        const { username, default_radius, preferred_amenities, profile_image } = req.body;
+
+        const updateData = {};
+        if (username) updateData.username = username;
+        if (default_radius !== undefined) updateData.default_radius = default_radius;
+        if (preferred_amenities) updateData.preferred_amenities = preferred_amenities;
+        if (profile_image) updateData.profile_image = profile_image;
+        updateData.updated_at = new Date().toISOString();
+
+        const { data, error } = await supabase
+            .from('users')
+            .update(updateData)
+            .eq('id', req.user.id)
+            .select()
+            .single();
+
+        if (error) {
+            if (error.code === '23505') {
+                return res.status(400).json({ error: 'Username already taken' });
+            }
+            throw error;
+        }
+
+        res.json(data);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+// Update user profile (profile table)
 exports.updateProfile = async (req, res) => {
     try {
         const { bio, interests, profile_picture_url, location_city } = req.body;

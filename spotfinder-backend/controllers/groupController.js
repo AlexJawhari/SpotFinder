@@ -175,36 +175,52 @@ exports.updateGroup = async (req, res) => {
 // Delete group
 exports.deleteGroup = async (req, res) => {
     try {
-        // Check if user is admin of the group OR site admin
-        const { data: member } = await supabase
-            .from('group_members')
-            .select('role')
-            .eq('group_id', req.params.id)
-            .eq('user_id', req.user.id)
+        const { id } = req.params;
+
+        // Verify ownership
+        const { data: group, error: fetchError } = await supabase
+            .from('groups')
+            .select('created_by')
+            .eq('id', id)
             .single();
 
-        const isGroupAdmin = member && member.role === 'admin';
-        const isSiteAdmin = req.user.email === 'alexjw99@gmail.com' || req.user.isAdmin === true;
-
-        if (!isGroupAdmin && !isSiteAdmin) {
-            return res.status(403).json({ error: 'Not authorized' });
+        if (fetchError || !group) {
+            return res.status(404).json({ error: 'Group not found' });
         }
 
-        // Clean up members first to avoid FK constraint issues if cascade is not set
-        await supabase
-            .from('group_members')
-            .delete()
-            .eq('group_id', req.params.id);
+        if (group.created_by !== req.user.id && req.user.email !== 'alexjw99@gmail.com') {
+            return res.status(403).json({ error: 'Not authorized to delete this group' });
+        }
 
-        const { error } = await supabase
+        // We'll attempt a direct delete first. 
+        // If it fails due to FK constraints (even though cascade is set in SQL, 
+        // sometimes Supabase instances/RLS have quirks), we'll catch and try cleanup.
+        const { error: deleteError } = await supabase
             .from('groups')
             .delete()
-            .eq('id', req.params.id);
+            .eq('id', id);
 
-        if (error) throw error;
+        if (deleteError) {
+            console.warn('Direct group delete failed, attempting manual member cleanup:', deleteError);
+
+            // Manual cleanup of members if cascade failed or trigger conflicted
+            await supabase
+                .from('group_members')
+                .delete()
+                .eq('group_id', id);
+
+            // Try again
+            const { error: retryError } = await supabase
+                .from('groups')
+                .delete()
+                .eq('id', id);
+
+            if (retryError) throw retryError;
+        }
 
         res.json({ message: 'Group deleted successfully' });
     } catch (error) {
+        console.error('Group deletion error:', error);
         res.status(500).json({ error: error.message });
     }
 };

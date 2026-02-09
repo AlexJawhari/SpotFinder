@@ -32,8 +32,12 @@ const listLocations = async (req, res, next) => {
     // If the client provides coordinates, keep DB results local to the visible area.
     // This makes the map UX feel much more like Google/Apple Maps.
     if (hasCoords) {
-      const latDelta = radiusKm / 111; // approx degrees latitude per km
-      const lngDelta = radiusKm / (111 * Math.cos((latitude * Math.PI) / 180));
+      // 1 degree of latitude is always ~111km
+      const latDelta = radiusKm / 111.0;
+      // 1 degree of longitude varies by cosine of latitude
+      const lngDelta = radiusKm / (111.0 * Math.cos((latitude * Math.PI) / 180.0));
+
+      console.log(`Searching within radius: ${radiusKm}km (latDelta: ${latDelta}, lngDelta: ${lngDelta})`);
 
       query = query
         .gte('latitude', latitude - latDelta)
@@ -45,7 +49,7 @@ const listLocations = async (req, res, next) => {
     const { data: rawDbResults, error } = await query.order('created_at', { ascending: false }).limit(200);
     if (error) throw error;
 
-    // If we have coords, filter precisely by radius and include distance for client-side sorting.
+    // If we have coords, filter precisely by circular radius and include distance for client-side sorting.
     const dbResults = (rawDbResults || [])
       .map((loc) => {
         if (!hasCoords) return loc;
@@ -53,8 +57,8 @@ const listLocations = async (req, res, next) => {
         const dKm = haversineDistanceKm(
           latitude,
           longitude,
-          Number(loc.latitude),
-          Number(loc.longitude)
+          parseFloat(loc.latitude),
+          parseFloat(loc.longitude)
         );
 
         return {
@@ -65,42 +69,86 @@ const listLocations = async (req, res, next) => {
       })
       .filter((loc) => {
         if (!hasCoords) return true;
+        // Strict circular radius check within the bounding box
         return typeof loc.distance_km === 'number' && loc.distance_km <= radiusKm;
       });
 
     let finalResults = dbResults;
 
-    // 2. External OSM Search (Only if searching)
-    // Use user location if available for proximity search
-    if (search && hasCoords) {
+    // 2. External OSM Search & Geocoding
+    if (search) {
       const { searchExternalLocations } = require('../utils/osmService');
-      const searchRadius = radiusKm; // already km
+
+      let searchLat = latitude;
+      let searchLng = longitude;
+      let searchRadius = radiusKm;
+
+      // Smarts: If searching for a city/state, geocode it first to move the search center
+      // Only do this if the search query is more than just a keyword
+      if (search.length > 3) {
+        try {
+          const { NOMINATIM_API } = require('../utils/osmService');
+          const geocodeRes = await fetch(`${NOMINATIM_API}?q=${encodeURIComponent(search + ' USA')}&format=json&limit=1`, {
+            headers: { 'User-Agent': 'SpotFinder-Student-App/1.0' }
+          });
+          const geocodeData = await geocodeRes.json();
+
+          if (geocodeData && geocodeData.length > 0 && geocodeData[0].importance > 0.4) {
+            const place = geocodeData[0];
+            // If it's a city/state/county, it likely represents a "Browse this area" intent
+            if (['city', 'state', 'administrative', 'village', 'town'].includes(place.type) || place.importance > 0.7) {
+              searchLat = parseFloat(place.lat);
+              searchLng = parseFloat(place.lon);
+              searchRadius = 25; // Increase radius for city-wide search
+              console.log(`Detected city/place search for "${search}". Moving center to ${searchLat}, ${searchLng}`);
+
+              // Update DB query to use the NEW center
+              const latDelta = searchRadius / 111.0;
+              const lngDelta = searchRadius / (111.0 * Math.cos((searchLat * Math.PI) / 180.0));
+
+              // Re-initialize query for the new area
+              query = supabase.from('locations').select('*');
+              if (category) query = query.eq('category', category);
+              query = query
+                .gte('latitude', searchLat - latDelta)
+                .lte('latitude', searchLat + latDelta)
+                .gte('longitude', searchLng - lngDelta)
+                .lte('longitude', searchLng + lngDelta);
+
+              const { data: movedDbResults } = await query.limit(100);
+              if (movedDbResults) {
+                finalResults = movedDbResults.map(loc => {
+                  const dKm = haversineDistanceKm(searchLat, searchLng, parseFloat(loc.latitude), parseFloat(loc.longitude));
+                  return { ...loc, distance_km: dKm, distance_miles: dKm / 1.60934 };
+                });
+              }
+            }
+          }
+        } catch (e) {
+          console.error("Geocoding failed, falling back to proximity search", e);
+        }
+      }
+
+      // Fetch from OSM around the (possibly updated) center
       const externalResults = await searchExternalLocations(
-        search, 
-        category, 
-        latitude, 
-        longitude,
+        search,
+        category,
+        searchLat,
+        searchLng,
         searchRadius
       );
 
-      // Dedup: Don't show external if we have a close match in DB (Basic name check)
+      // Dedup: Don't show external if we have a close match in DB
       const validExternal = externalResults.filter(ext =>
         !finalResults.some(db => {
-          const nameMatch = db.name.toLowerCase() === ext.name.toLowerCase();
-          const locationMatch = Math.abs(db.latitude - ext.latitude) < 0.001 && 
-                               Math.abs(db.longitude - ext.longitude) < 0.001;
+          const nameMatch = db.name.toLowerCase().includes(ext.name.toLowerCase()) ||
+            ext.name.toLowerCase().includes(db.name.toLowerCase());
+          const locationMatch = Math.abs(db.latitude - ext.latitude) < 0.005 &&
+            Math.abs(db.longitude - ext.longitude) < 0.005;
           return nameMatch && locationMatch;
         })
       );
 
-      finalResults = [...finalResults, ...validExternal];
-    } else if (search) {
-      // Fallback to text-only search without coordinates
-      const { searchExternalLocations } = require('../utils/osmService');
-      const externalResults = await searchExternalLocations(search, category);
-      const validExternal = externalResults.filter(ext =>
-        !finalResults.some(db => db.name.toLowerCase() === ext.name.toLowerCase() && db.city === ext.city)
-      );
       finalResults = [...finalResults, ...validExternal];
     }
 
@@ -116,7 +164,7 @@ const listLocations = async (req, res, next) => {
           !finalResults.some(db => {
             const nameMatch = (db.name || '').toLowerCase() === (ext.name || '').toLowerCase();
             const locationMatch = Math.abs(db.latitude - ext.latitude) < 0.001 &&
-                                 Math.abs(db.longitude - ext.longitude) < 0.001;
+              Math.abs(db.longitude - ext.longitude) < 0.001;
             return nameMatch && locationMatch;
           })
         );
@@ -137,9 +185,18 @@ const getLocationById = async (req, res, next) => {
   try {
     const { id } = req.params;
 
-    // Handle OSM external locations - they don't exist in our database
+    // Handle OSM external locations
     if (id.startsWith('osm_')) {
-      return res.status(404).json({ error: 'External location - details not available in database' });
+      // For now, we don't have a specific table for external details, 
+      // but we shouldn't 404. We'll return a basic object that the 
+      // frontend can use, or ideally, we should have the frontend 
+      // pass the data in state. But since this is an API call:
+      return res.json({
+        id,
+        name: 'External Location',
+        is_external: true,
+        description: 'Detail view for external locations is currently limited to the map popup data. We are working on full integration.'
+      });
     }
 
     const { data, error } = await supabase

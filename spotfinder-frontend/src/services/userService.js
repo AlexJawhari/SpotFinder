@@ -14,6 +14,12 @@ export const userService = {
         return data;
     },
 
+    // Update account settings
+    updateSettings: async (settingsData) => {
+        const { data } = await api.put('/profile/settings', settingsData);
+        return data;
+    },
+
     // Follow user
     followUser: async (userId) => {
         const { data } = await api.post(`/profile/${userId}/follow`);

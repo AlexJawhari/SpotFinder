@@ -7,6 +7,7 @@ const { protect } = require('../middleware/auth');
 router.get('/profile', protect, userController.getProfile);
 router.get('/profile/:userId', userController.getProfile);
 router.put('/profile', protect, userController.updateProfile);
+router.put('/settings', protect, userController.updateAccountSettings);
 
 // Follow routes
 router.post('/:userId/follow', protect, userController.followUser);

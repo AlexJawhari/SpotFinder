@@ -1,5 +1,6 @@
 import { MapContainer, TileLayer, Marker, Popup, useMap, useMapEvents } from 'react-leaflet';
 import { useEffect, useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import 'leaflet/dist/leaflet.css';
 
 import L from 'leaflet';
@@ -233,7 +234,7 @@ const MapView = ({ locations = [], onMarkerClick, center, zoom, selectedLocation
                     }}
                 >
                     <Popup className="custom-popup">
-                        <div className="w-64 overflow-hidden rounded-xl bg-white shadow-xl border border-slate-100">
+                        <Link to={`/location/${location.id}`} className="block w-64 overflow-hidden rounded-xl bg-white shadow-xl border border-slate-100 hover:no-underline transition-transform hover:scale-[1.01]">
                             {location.images && location.images.length > 0 ? (
                                 <img
                                     src={location.images[0]}
@@ -241,17 +242,23 @@ const MapView = ({ locations = [], onMarkerClick, center, zoom, selectedLocation
                                     className="w-full h-32 object-cover"
                                 />
                             ) : (
-                                <div className="w-full h-32 bg-gradient-to-br from-blue-400 to-emerald-400 flex items-center justify-center">
-                                    <span className="text-4xl">📍</span>
+                                <div className="w-full h-32 bg-gradient-to-br from-[#4FC3F7] to-[#66BB6A] flex items-center justify-center">
+                                    <span className="text-4xl shadow-lg">📍</span>
                                 </div>
                             )}
-                            <div className="p-4">
+                            <div className="p-4 bg-white/50 backdrop-blur-sm">
                                 <div className="flex justify-between items-start mb-2">
                                     <h3 className="font-bold text-slate-900 text-lg leading-tight line-clamp-1">{location.name}</h3>
-                                    <span className="text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-600 px-2 py-0.5 rounded">
+                                    <span className="text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-600 px-2 py-0.5 rounded shadow-sm">
                                         {location.category}
                                     </span>
                                 </div>
+
+                                {location.address && (
+                                    <p className="text-[11px] text-slate-500 mb-2 flex items-center gap-1">
+                                        📍 {location.address}
+                                    </p>
+                                )}
 
                                 <p className="text-xs text-slate-600 line-clamp-2 mb-3 leading-relaxed">
                                     {location.description || 'No description available'}
@@ -259,30 +266,22 @@ const MapView = ({ locations = [], onMarkerClick, center, zoom, selectedLocation
 
                                 <div className="flex items-center justify-between mt-4">
                                     {location.average_rating > 0 && (
-                                        <div className="flex items-center gap-1 text-amber-500 font-bold text-xs">
+                                        <div className="flex items-center gap-1 text-amber-500 font-bold text-xs bg-amber-50 px-2 py-0.5 rounded-full">
                                             <span>★</span> {location.average_rating.toFixed(1)}
                                         </div>
                                     )}
-                                    <a
-                                        href={`/location/${location.id}`}
-                                        className="text-xs font-bold text-blue-500 hover:text-blue-600 flex items-center gap-1 transition-colors"
-                                        onClick={(e) => {
-                                            e.preventDefault();
-                                            // Handle internal routing if necessary, or just rely on the link
-                                            window.location.href = `/location/${location.id}`;
-                                        }}
-                                    >
-                                        View Details →
-                                    </a>
+                                    <span className="text-xs font-bold text-[#4FC3F7] group-hover:text-[#26C6DA] flex items-center gap-1 transition-colors">
+                                        Full Details →
+                                    </span>
                                 </div>
 
                                 {location.is_external && (
-                                    <div className="mt-2 pt-2 border-t border-slate-50 text-[10px] text-slate-400 italic">
+                                    <div className="mt-2 pt-2 border-t border-slate-100 text-[10px] text-slate-400 italic">
                                         🌐 Found via OpenStreetMap
                                     </div>
                                 )}
                             </div>
-                        </div>
+                        </Link>
                     </Popup>
                 </Marker>
             ))}
