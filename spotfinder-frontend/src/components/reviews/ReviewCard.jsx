@@ -1,8 +1,9 @@
 import { FaThumbsUp, FaThumbsDown } from 'react-icons/fa';
 import StarRating from '../common/StarRating';
+import ModerationControls from '../common/ModerationControls';
 import { formatRelativeTime } from '../../utils/formatters';
 
-const ReviewCard = ({ review, onVote, currentUserId }) => {
+const ReviewCard = ({ review, onVote, onDelete, currentUserId }) => {
     const isOwnReview = review.user_id === currentUserId;
 
     return (
@@ -12,11 +13,28 @@ const ReviewCard = ({ review, onVote, currentUserId }) => {
                     <h4 className="font-semibold text-gray-900">{review.username || 'Anonymous'}</h4>
                     <p className="text-sm text-gray-500">{formatRelativeTime(review.created_at)}</p>
                 </div>
-                <StarRating rating={review.overall_rating} size="sm" />
+                <div className="flex items-center gap-2">
+                    <StarRating rating={review.overall_rating} size="sm" />
+                    <ModerationControls
+                        creatorId={review.user_id}
+                        onDelete={() => onDelete(review.id)}
+                        resourceName="review"
+                    />
+                </div>
             </div>
 
             {review.review_text && (
                 <p className="text-gray-700 mb-3">{review.review_text}</p>
+            )}
+
+            {review.image_url && (
+                <div className="mb-3">
+                    <img
+                        src={review.image_url}
+                        alt="Review attachment"
+                        className="rounded-lg max-h-60 object-cover w-full md:w-auto"
+                    />
+                </div>
             )}
 
             <div className="grid grid-cols-3 gap-2 mb-3">

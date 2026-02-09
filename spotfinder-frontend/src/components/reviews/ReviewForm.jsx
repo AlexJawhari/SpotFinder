@@ -11,6 +11,7 @@ const ReviewForm = ({ locationId, onSuccess }) => {
     const [wifiRating, setWifiRating] = useState(0);
     const [seatingRating, setSeatingRating] = useState(0);
     const [noiseRating, setNoiseRating] = useState(0);
+    const [selectedFile, setSelectedFile] = useState(null);
 
     const {
         register,
@@ -27,6 +28,12 @@ const ReviewForm = ({ locationId, onSuccess }) => {
 
         setLoading(true);
         try {
+            let imageUrl = null;
+            if (selectedFile) {
+                const uploadRes = await reviewService.uploadImage(selectedFile);
+                imageUrl = uploadRes.imageUrl;
+            }
+
             const reviewData = {
                 location_id: locationId,
                 overall_rating: overallRating,
@@ -35,6 +42,7 @@ const ReviewForm = ({ locationId, onSuccess }) => {
                 noise_rating: noiseRating || null,
                 review_text: data.review_text,
                 visit_date: data.visit_date,
+                image_url: imageUrl
             };
 
             await reviewService.createReview(reviewData);
@@ -46,6 +54,7 @@ const ReviewForm = ({ locationId, onSuccess }) => {
             setWifiRating(0);
             setSeatingRating(0);
             setNoiseRating(0);
+            setSelectedFile(null);
 
             if (onSuccess) {
                 onSuccess();
@@ -117,6 +126,21 @@ const ReviewForm = ({ locationId, onSuccess }) => {
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                     placeholder="Share your experience..."
                 />
+            </div>
+
+            <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Attach Photo (Optional)
+                </label>
+                <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => setSelectedFile(e.target.files[0])}
+                    className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                />
+                {selectedFile && (
+                    <p className="mt-1 text-xs text-gray-500">Selected: {selectedFile.name}</p>
+                )}
             </div>
 
             <div>

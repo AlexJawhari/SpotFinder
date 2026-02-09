@@ -80,11 +80,11 @@ exports.getGroups = async (req, res) => {
                         .from('group_members')
                         .select('id', { count: 'exact', head: true })
                         .eq('group_id', group.id);
-                    
+
                     if (countError) {
                         console.error('Error counting group members:', countError);
                     }
-                    
+
                     return {
                         ...group,
                         member_count: count || 0
@@ -175,7 +175,7 @@ exports.updateGroup = async (req, res) => {
 // Delete group
 exports.deleteGroup = async (req, res) => {
     try {
-        // Check if user is admin
+        // Check if user is admin of the group OR site admin
         const { data: member } = await supabase
             .from('group_members')
             .select('role')
@@ -183,7 +183,10 @@ exports.deleteGroup = async (req, res) => {
             .eq('user_id', req.user.id)
             .single();
 
-        if (!member || member.role !== 'admin') {
+        const isGroupAdmin = member && member.role === 'admin';
+        const isSiteAdmin = req.user.email === 'alexjw99@gmail.com' || req.user.isAdmin === true;
+
+        if (!isGroupAdmin && !isSiteAdmin) {
             return res.status(403).json({ error: 'Not authorized' });
         }
 

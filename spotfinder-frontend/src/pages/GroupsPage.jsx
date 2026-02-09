@@ -65,6 +65,16 @@ const GroupsPage = () => {
         }
     };
 
+    const handleDeleteGroup = async (groupId) => {
+        try {
+            await groupService.deleteGroup(groupId);
+            setGroups(groups.filter(g => g.id !== groupId));
+            toast.success('Group deleted');
+        } catch (error) {
+            toast.error('Failed to delete group');
+        }
+    };
+
     const isMember = (groupId) => {
         return userGroups.some(g => g.id === groupId);
     };
@@ -92,8 +102,8 @@ const GroupsPage = () => {
                         key={type}
                         onClick={() => setFilter(type)}
                         className={`px-4 py-2 rounded-full text-sm whitespace-nowrap transition-all ${filter === type
-                                ? 'bg-gradient-to-r from-[#4FC3F7] to-[#66BB6A] text-white shadow-lg'
-                                : 'bg-white/85 backdrop-blur-sm text-slate-700 hover:bg-white border border-[#B2DFDB]/50'
+                            ? 'bg-gradient-to-r from-[#4FC3F7] to-[#66BB6A] text-white shadow-lg'
+                            : 'bg-white/85 backdrop-blur-sm text-slate-700 hover:bg-white border border-[#B2DFDB]/50'
                             }`}
                     >
                         {type === 'all' ? 'All Groups' : type.charAt(0).toUpperCase() + type.slice(1)}
@@ -126,6 +136,7 @@ const GroupsPage = () => {
                             group={group}
                             onJoin={handleJoin}
                             isMember={isMember(group.id)}
+                            onDelete={handleDeleteGroup}
                         />
                     ))}
                 </div>

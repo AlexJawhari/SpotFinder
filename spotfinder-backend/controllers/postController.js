@@ -87,11 +87,11 @@ exports.getPosts = async (req, res) => {
                         .from('post_comments')
                         .select('id', { count: 'exact', head: true })
                         .eq('post_id', post.id);
-                    
+
                     if (countError) {
                         console.error('Error counting comments:', countError);
                     }
-                    
+
                     return {
                         ...post,
                         comment_count: count || 0
@@ -178,14 +178,17 @@ exports.updatePost = async (req, res) => {
 // Delete post
 exports.deletePost = async (req, res) => {
     try {
-        // Check if user owns the post
+        // Check if user owns the post OR is site admin
         const { data: post } = await supabase
             .from('posts')
             .select('created_by')
             .eq('id', req.params.id)
             .single();
 
-        if (!post || post.created_by !== req.user.id) {
+        const isCreator = post && post.created_by === req.user.id;
+        const isAdmin = req.user.email === 'alexjw99@gmail.com' || req.user.isAdmin === true;
+
+        if (!isCreator && !isAdmin) {
             return res.status(403).json({ error: 'Not authorized' });
         }
 
@@ -287,11 +290,11 @@ exports.getUserPosts = async (req, res) => {
                     .from('post_comments')
                     .select('id', { count: 'exact', head: true })
                     .eq('post_id', post.id);
-                
+
                 if (countError) {
                     console.error('Error counting comments:', countError);
                 }
-                
+
                 return {
                     ...post,
                     comment_count: count || 0

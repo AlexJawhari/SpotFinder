@@ -71,8 +71,14 @@ const EventsPage = () => {
         }
     };
 
-    const getUserRsvpStatus = (eventId) => {
-        return userRsvps.find(e => e.id === eventId);
+    const handleDeleteEvent = async (eventId) => {
+        try {
+            await eventService.deleteEvent(eventId);
+            setEvents(events.filter(e => e.id !== eventId));
+            toast.success('Event deleted');
+        } catch (error) {
+            toast.error('Failed to delete event');
+        }
     };
 
     return (
@@ -124,6 +130,7 @@ const EventsPage = () => {
                             event={event}
                             onRsvp={handleRsvp}
                             userRsvpStatus={getUserRsvpStatus(event.id)}
+                            onDelete={handleDeleteEvent}
                         />
                     ))}
                 </div>

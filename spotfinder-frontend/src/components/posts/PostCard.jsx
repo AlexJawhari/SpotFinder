@@ -1,8 +1,6 @@
-import { FaArrowUp, FaArrowDown, FaComment, FaMapMarkerAlt } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
-import { format } from 'date-fns';
+import ModerationControls from '../common/ModerationControls';
 
-const PostCard = ({ post, onVote, userVote }) => {
+const PostCard = ({ post, onVote, userVote, onDelete }) => {
     const score = (post.upvotes || 0) - (post.downvotes || 0);
 
     return (
@@ -38,11 +36,18 @@ const PostCard = ({ post, onVote, userVote }) => {
                         </span>
                     </div>
 
-                    <Link to={`/community/${post.id}`}>
-                        <h3 className="text-lg font-semibold text-gray-900 hover:text-blue-600 transition mb-2">
-                            {post.title}
-                        </h3>
-                    </Link>
+                    <div className="flex justify-between items-start mb-2">
+                        <Link to={`/community/${post.id}`}>
+                            <h3 className="text-lg font-semibold text-gray-900 hover:text-blue-600 transition">
+                                {post.title}
+                            </h3>
+                        </Link>
+                        <ModerationControls
+                            creatorId={post.created_by}
+                            onDelete={() => onDelete && onDelete(post.id)}
+                            resourceName="post"
+                        />
+                    </div>
 
                     <p className="text-gray-700 line-clamp-3 mb-3">{post.content}</p>
 

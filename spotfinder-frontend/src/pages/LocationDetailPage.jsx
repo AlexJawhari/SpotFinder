@@ -99,6 +99,16 @@ const LocationDetailPage = () => {
         setReviews(updatedReviews);
     };
 
+    const handleDeleteReview = async (reviewId) => {
+        try {
+            await reviewService.deleteReview(reviewId);
+            setReviews(reviews.filter(r => r.id !== reviewId));
+            toast.success('Review deleted');
+        } catch (error) {
+            toast.error('Failed to delete review');
+        }
+    };
+
     const getAmenityIcon = (amenityId) => {
         const amenity = AMENITIES.find(a => a.id === amenityId);
         return amenity?.icon || '•';

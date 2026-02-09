@@ -74,6 +74,7 @@ app.use('/api/groups', groupRoutes);
 app.use('/api/profile', usersRoutes);
 app.use('/api/check-ins', checkInRoutes);
 app.use('/api/geolocation', geolocationRoutes);
+app.use('/api/upload', require('./routes/upload.routes'));
 
 // Fallback when no route matches.
 app.use((req, res) => {

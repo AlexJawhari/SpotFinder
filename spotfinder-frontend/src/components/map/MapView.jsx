@@ -6,14 +6,84 @@ import L from 'leaflet';
 
 import { DEFAULT_MAP_CENTER, MAP_ZOOM } from '../../utils/constants';
 
-// Explicit divIcon for markers – avoids L.Icon.Default / createIcon issues with react-leaflet-cluster
-const MARKER_ICON_URL = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png';
-const defaultPinIcon = L.divIcon({
-    className: 'custom-marker-icon',
-    html: `<img src="${MARKER_ICON_URL}" alt="" style="width:25px;height:41px;margin-left:-12px;margin-top:-41px;" />`,
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-});
+// Helper to get icon based on category
+const getCategoryIcon = (category) => {
+    let emoji = '📍';
+    let color = '#3b82f6'; // blue-500
+
+    switch (category?.toLowerCase()) {
+        case 'library':
+        case 'education':
+            emoji = '📚';
+            color = '#8b5cf6'; // violet-500
+            break;
+        case 'park':
+        case 'leisure':
+            emoji = '🌳';
+            color = '#22c55e'; // green-500
+            break;
+        case 'cafe':
+        case 'coffee':
+            emoji = '☕';
+            color = '#f59e0b'; // amber-500
+            break;
+        case 'restaurant':
+        case 'food':
+            emoji = '🍽️';
+            color = '#ef4444'; // red-500
+            break;
+        case 'bar':
+        case 'pub':
+        case 'nightlife':
+            emoji = '🍺';
+            color = '#a855f7'; // purple-500
+            break;
+        case 'gym':
+        case 'fitness':
+            emoji = '🏋️';
+            color = '#ec4899'; // pink-500
+            break;
+        case 'coworking':
+        case 'office':
+            emoji = '🏢';
+            color = '#64748b'; // slate-500
+            break;
+        default:
+            emoji = '📍';
+            color = '#3b82f6';
+    }
+
+    return L.divIcon({
+        className: 'custom-marker-icon',
+        html: `
+            <div style="
+                background-color: white;
+                border: 2px solid ${color};
+                border-radius: 50%;
+                width: 30px;
+                height: 30px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 16px;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            ">
+                ${emoji}
+            </div>
+            <div style="
+                width: 0; 
+                height: 0; 
+                border-left: 6px solid transparent;
+                border-right: 6px solid transparent;
+                border-top: 8px solid ${color};
+                margin: -2px auto 0;
+            "></div>
+        `,
+        iconSize: [30, 40],
+        iconAnchor: [15, 40],
+        popupAnchor: [0, -40]
+    });
+};
 
 // Component to update map view when center changes
 function ChangeView({ center, zoom }) {
@@ -111,12 +181,12 @@ const MapView = ({ locations = [], onMarkerClick, center, zoom, selectedLocation
         return [c.lat, c.lng];
     }, [center?.lat, center?.lng, mapCenter.lat, mapCenter.lng]);
 
-    // Filter out locations without valid coordinates and ensure they're in US bounds
+    // Filter out locations without valid coordinates and ensure they're in US bounds (extended to include broader US)
     const US_BBOX = {
-        south: 24.396308,
-        north: 49.384358,
+        south: 24.0,
+        north: 50.0,
         west: -125.0,
-        east: -66.93457
+        east: -65.0
     };
 
     const validLocations = locations.filter(loc => {
@@ -127,7 +197,7 @@ const MapView = ({ locations = [], onMarkerClick, center, zoom, selectedLocation
 
         if (isNaN(lat) || isNaN(lng)) return false;
 
-        // Only show US locations
+        // Relaxed US check or global check if needed, but keeping US focus for now
         return lat >= US_BBOX.south && lat <= US_BBOX.north &&
             lng >= US_BBOX.west && lng <= US_BBOX.east;
     });
@@ -157,7 +227,7 @@ const MapView = ({ locations = [], onMarkerClick, center, zoom, selectedLocation
                 <Marker
                     key={location.id}
                     position={[parseFloat(location.latitude), parseFloat(location.longitude)]}
-                    icon={location.id === selectedLocationId ? selectedPinIcon : defaultPinIcon}
+                    icon={location.id === selectedLocationId ? selectedPinIcon : getCategoryIcon(location.category)}
                     eventHandlers={{
                         click: () => onMarkerClick && onMarkerClick(location),
                     }}

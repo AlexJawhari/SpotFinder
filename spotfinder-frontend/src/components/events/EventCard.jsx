@@ -2,7 +2,9 @@ import { FaCalendar, FaMapMarkerAlt, FaClock, FaUser } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
 
-const EventCard = ({ event, onRsvp, userRsvpStatus }) => {
+import ModerationControls from '../common/ModerationControls';
+
+const EventCard = ({ event, onRsvp, userRsvpStatus, onDelete }) => {
     const startDate = new Date(event.start_time);
     const attendeeCount = event.rsvp_count?.[0]?.count || 0;
 
@@ -20,11 +22,18 @@ const EventCard = ({ event, onRsvp, userRsvpStatus }) => {
                     <span>{format(startDate, 'h:mm a')}</span>
                 </div>
 
-                <Link to={`/events/${event.id}`}>
-                    <h3 className="text-lg font-semibold text-gray-900 hover:text-blue-600 transition mb-2">
-                        {event.title}
-                    </h3>
-                </Link>
+                <div className="flex justify-between items-start mb-2">
+                    <Link to={`/events/${event.id}`}>
+                        <h3 className="text-lg font-semibold text-gray-900 hover:text-blue-600 transition">
+                            {event.title}
+                        </h3>
+                    </Link>
+                    <ModerationControls
+                        creatorId={event.created_by}
+                        onDelete={() => onDelete && onDelete(event.id)}
+                        resourceName="event"
+                    />
+                </div>
 
                 <p className="text-gray-600 text-sm line-clamp-2 mb-3">{event.description}</p>
 

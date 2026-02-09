@@ -1,14 +1,16 @@
 import { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { format } from 'date-fns';
 import eventService from '../services/events.service';
 import { useAuthStore } from '../store/authStore';
 import LoadingSpinner from '../components/common/LoadingSpinner';
+import ModerationControls from '../components/common/ModerationControls';
 import { FaCalendar, FaClock, FaMapMarkerAlt, FaUser } from 'react-icons/fa';
 
 const EventDetailPage = () => {
     const { id } = useParams();
+    const navigate = useNavigate();
     const { isAuthenticated, user } = useAuthStore();
     const [event, setEvent] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -33,6 +35,16 @@ const EventDetailPage = () => {
             toast.error('Failed to load event');
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleDelete = async () => {
+        try {
+            await eventService.deleteEvent(id);
+            toast.success('Event deleted');
+            navigate('/events');
+        } catch (error) {
+            toast.error('Failed to delete event');
         }
     };
 
@@ -91,7 +103,14 @@ const EventDetailPage = () => {
     return (
         <div className="container mx-auto px-4 py-8 max-w-4xl">
             <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-                <h1 className="text-3xl font-bold text-gray-900 mb-4">{event.title}</h1>
+                <div className="flex justify-between items-start mb-4">
+                    <h1 className="text-3xl font-bold text-gray-900">{event.title}</h1>
+                    <ModerationControls
+                        creatorId={event.created_by}
+                        onDelete={handleDelete}
+                        resourceName="event"
+                    />
+                </div>
 
                 <div className="flex flex-wrap gap-4 mb-4 text-gray-600">
                     <div className="flex items-center gap-2">

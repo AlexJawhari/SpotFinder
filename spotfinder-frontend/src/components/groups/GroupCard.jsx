@@ -1,7 +1,6 @@
-import { FaUsers, FaMapMarkerAlt, FaLock } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
+import ModerationControls from '../common/ModerationControls';
 
-const GroupCard = ({ group, onJoin, isMember }) => {
+const GroupCard = ({ group, onJoin, isMember, onDelete }) => {
     return (
         <div className="bg-white rounded-lg shadow-md hover:shadow-lg transition p-4">
             <div className="flex gap-4">
@@ -10,15 +9,22 @@ const GroupCard = ({ group, onJoin, isMember }) => {
                 )}
 
                 <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-2">
-                        <Link to={`/groups/${group.id}`}>
-                            <h3 className="text-lg font-semibold text-gray-900 hover:text-blue-600 transition">
-                                {group.name}
-                            </h3>
-                        </Link>
-                        {group.is_private && (
-                            <FaLock className="text-gray-400" size={14} />
-                        )}
+                    <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-2">
+                            <Link to={`/groups/${group.id}`}>
+                                <h3 className="text-lg font-semibold text-gray-900 hover:text-blue-600 transition">
+                                    {group.name}
+                                </h3>
+                            </Link>
+                            {group.is_private && (
+                                <FaLock className="text-gray-400" size={14} />
+                            )}
+                        </div>
+                        <ModerationControls
+                            creatorId={group.created_by}
+                            onDelete={() => onDelete && onDelete(group.id)}
+                            resourceName="group"
+                        />
                     </div>
 
                     <p className="text-gray-600 text-sm line-clamp-2 mb-3">{group.description}</p>

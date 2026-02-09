@@ -1,15 +1,17 @@
 import { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { format } from 'date-fns';
 import { postService } from '../services/postService';
 import { useAuthStore } from '../store/authStore';
 import LoadingSpinner from '../components/common/LoadingSpinner';
+import ModerationControls from '../components/common/ModerationControls';
 import { FaArrowUp, FaArrowDown, FaMapMarkerAlt } from 'react-icons/fa';
 
 const PostDetailPage = () => {
     const { id } = useParams();
-    const { isAuthenticated } = useAuthStore();
+    const navigate = useNavigate();
+    const { isAuthenticated, user } = useAuthStore();
     const [post, setPost] = useState(null);
     const [loading, setLoading] = useState(true);
     const [comment, setComment] = useState('');
@@ -27,6 +29,16 @@ const PostDetailPage = () => {
             toast.error('Failed to load post');
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleDelete = async () => {
+        try {
+            await postService.deletePost(id);
+            toast.success('Post deleted');
+            navigate('/community');
+        } catch (error) {
+            toast.error('Failed to delete post');
         }
     };
 
@@ -110,7 +122,14 @@ const PostDetailPage = () => {
                             <span>{format(new Date(post.created_at), 'MMMM d, yyyy at h:mm a')}</span>
                         </div>
 
-                        <h1 className="text-2xl font-bold text-gray-900 mb-4">{post.title}</h1>
+                        <div className="flex justify-between items-start mb-4">
+                            <h1 className="text-2xl font-bold text-gray-900">{post.title}</h1>
+                            <ModerationControls
+                                creatorId={post.created_by}
+                                onDelete={handleDelete}
+                                resourceName="post"
+                            />
+                        </div>
 
                         <div className="mb-4">
                             <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded text-sm">

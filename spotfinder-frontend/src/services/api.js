@@ -38,4 +38,20 @@ api.interceptors.response.use(
     }
 );
 
+// Helper for image upload
+api.uploadImage = async (file) => {
+    const formData = new FormData();
+    formData.append('image', file);
+
+    // Check if Content-Type header needs to be multipart/form-data. 
+    // Axios usually sets this automatically when data is FormData, 
+    // but the instance has default JSON. We override here.
+    const response = await api.post('/upload', formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data',
+        },
+    });
+    return response.data;
+};
+
 export default api;

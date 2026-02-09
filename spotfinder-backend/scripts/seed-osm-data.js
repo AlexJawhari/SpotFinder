@@ -101,11 +101,20 @@ async function seedData() {
         return;
     }
 
-    const CITIES = ['New York', 'Los Angeles', 'Chicago', 'Austin', 'Seattle'];
+    const CITIES = [
+        'New York', 'Los Angeles', 'Chicago', 'Austin', 'Seattle',
+        'Dallas', 'San Francisco', 'Miami', 'Denver', 'Boston', 'Atlanta', 'Portland'
+    ];
+
+    // More comprehensive categories
     const CATEGORIES = [
         { type: 'library', key: 'amenity', value: 'library', amenities: ['wifi', 'quiet', 'books', 'study_space'] },
         { type: 'park', key: 'leisure', value: 'park', amenities: ['nature', 'open_space', 'family_friendly'] },
-        { type: 'cafe', key: 'amenity', value: 'cafe', amenities: ['coffee', 'wifi', 'food'] }
+        { type: 'cafe', key: 'amenity', value: 'cafe', amenities: ['coffee', 'wifi', 'food', 'sockets'] },
+        { type: 'restaurant', key: 'amenity', value: 'restaurant', amenities: ['food', 'dining', 'family_friendly'] },
+        { type: 'bar', key: 'amenity', value: 'pub', amenities: ['alcohol', 'music', 'social'] },
+        { type: 'gym', key: 'leisure', value: 'fitness_centre', amenities: ['gym', 'shower', 'equipment'] },
+        { type: 'coworking', key: 'amenity', value: 'coworking_space', amenities: ['wifi', 'desk', 'meeting_room'] }
     ];
 
     let totalInserted = 0;
@@ -114,7 +123,8 @@ async function seedData() {
         console.log(`\n📍 Processing ${city}...`);
 
         for (const cat of CATEGORIES) {
-            const places = await fetchOverpassData(city, cat.type, cat.key, cat.value, 10); // Fetch 10 per category per city
+            // Increased limit to 20 per category per city
+            const places = await fetchOverpassData(city, cat.type, cat.key, cat.value, 20);
             console.log(`   Found ${places.length} ${cat.type}s`);
 
             for (const place of places) {
@@ -137,9 +147,12 @@ async function seedData() {
                     continue;
                 }
 
+                // Better placeholder images using specific keywords
+                const imageKeyword = cat.type === 'coworking' ? 'office' : cat.type;
+
                 const location = {
                     name: name,
-                    description: `A Popular ${cat.type} in ${city}. (Imported from OSM)`,
+                    description: place.tags?.description || `A popular ${cat.type} in ${city} sourced from OpenStreetMap.`,
                     address: `${place.tags?.['addr:housenumber'] || ''} ${place.tags?.['addr:street'] || 'Downtown'}`,
                     city: city,
                     latitude: lat,
@@ -147,7 +160,7 @@ async function seedData() {
                     category: cat.type,
                     amenities: cat.amenities,
                     created_by: systemUserId,
-                    images: [`https://source.unsplash.com/random/800x600?${cat.type}`]
+                    images: [`https://loremflickr.com/800/600/${imageKeyword},building?lock=${Math.floor(Math.random() * 1000)}`]
                 };
 
                 const { error: insertError } = await supabase

@@ -35,6 +35,7 @@ const createReview = async (req, res, next) => {
       noise_rating,
       review_text,
       visit_date,
+      image_url
     } = req.body;
 
     const payload = {
@@ -46,6 +47,7 @@ const createReview = async (req, res, next) => {
       noise_rating,
       review_text,
       visit_date: visit_date || null,
+      image_url,
     };
 
     const { data, error } = await supabase.from('reviews').insert(payload).select('*').single();
@@ -106,7 +108,10 @@ const deleteReview = async (req, res, next) => {
     if (!review) {
       return res.status(404).json({ error: 'Review not found' });
     }
-    if (review.user_id !== userId) {
+
+    const isAdmin = req.user.email === 'alexjw99@gmail.com' || req.user.isAdmin === true;
+
+    if (review.user_id !== userId && !isAdmin) {
       return res.status(403).json({ error: 'Not authorized to delete this review' });
     }
 

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import ReviewCard from './ReviewCard';
 import LoadingSpinner from '../common/LoadingSpinner';
 
-const ReviewList = ({ reviews = [], loading, onVote, currentUserId }) => {
+const ReviewList = ({ reviews = [], loading, onVote, onDelete, currentUserId }) => {
     const [sortBy, setSortBy] = useState('newest');
 
     const sortedReviews = [...reviews].sort((a, b) => {
@@ -64,6 +64,7 @@ const ReviewList = ({ reviews = [], loading, onVote, currentUserId }) => {
                         key={review.id}
                         review={review}
                         onVote={onVote}
+                        onDelete={onDelete}
                         currentUserId={currentUserId}
                     />
                 ))}

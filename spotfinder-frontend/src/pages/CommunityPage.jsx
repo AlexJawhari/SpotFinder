@@ -71,6 +71,16 @@ const CommunityPage = () => {
         }
     };
 
+    const handleDeletePost = async (postId) => {
+        try {
+            await postService.deletePost(postId);
+            setPosts(posts.filter(p => p.id !== postId));
+            toast.success('Post deleted');
+        } catch (error) {
+            toast.error('Failed to delete post');
+        }
+    };
+
     return (
         <div className="container mx-auto px-4 py-8">
             <div className="flex justify-between items-center mb-6">
@@ -96,8 +106,8 @@ const CommunityPage = () => {
                                 key={type.id}
                                 onClick={() => setFilter(type.id)}
                                 className={`px-3 py-1.5 rounded-full text-sm transition-all ${filter === type.id
-                                        ? 'bg-gradient-to-r from-[#4FC3F7] to-[#66BB6A] text-white shadow-lg'
-                                        : 'bg-white/85 backdrop-blur-sm text-slate-700 hover:bg-white border border-[#B2DFDB]/50'
+                                    ? 'bg-gradient-to-r from-[#4FC3F7] to-[#66BB6A] text-white shadow-lg'
+                                    : 'bg-white/85 backdrop-blur-sm text-slate-700 hover:bg-white border border-[#B2DFDB]/50'
                                     }`}
                             >
                                 {type.label}
@@ -141,6 +151,7 @@ const CommunityPage = () => {
                             key={post.id}
                             post={post}
                             onVote={handleVote}
+                            onDelete={handleDeletePost}
                         />
                     ))}
                 </div>
