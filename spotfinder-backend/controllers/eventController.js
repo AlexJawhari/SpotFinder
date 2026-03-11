@@ -197,7 +197,8 @@ exports.updateEvent = async (req, res) => {
             .eq('id', req.params.id)
             .single();
 
-        const isAdmin = req.user.email === 'alexjw99@gmail.com' || req.user.email === 'admin@gmail.com' || req.user.isAdmin === true; // Hardcoded admin for now as requested
+        const isAdmin = req.user.is_admin === true;
+
 
         if (!event || (event.created_by !== req.user.id && !isAdmin)) {
             return res.status(403).json({ error: 'Not authorized' });
@@ -228,7 +229,8 @@ exports.deleteEvent = async (req, res) => {
             .eq('id', req.params.id)
             .single();
 
-        const isAdmin = req.user.email === 'alexjw99@gmail.com' || req.user.email === 'admin@gmail.com' || req.user.isAdmin === true;
+        const isAdmin = req.user.is_admin === true;
+
 
         if (!event || (event.created_by !== req.user.id && !isAdmin)) {
             return res.status(403).json({ error: 'Not authorized' });

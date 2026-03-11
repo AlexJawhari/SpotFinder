@@ -21,10 +21,13 @@ async function scrapeYelpData(businessName, city) {
         const response = await axios.get(yelpSearchUrl, { headers, timeout: 5000 });
         const html = response.data;
 
-        // Simplified extraction using regex
-        // Look for something like "rating": 4.5 or similar patterns in JSON-LD or HTML
-        const ratingMatch = html.match(/"ratingValue":\s*([\d.]+)/) || html.match(/aria-label="([\d.]+) star rating"/);
-        const reviewCountMatch = html.match(/"reviewCount":\s*(\d+)/) || html.match(/(\d+) reviews/);
+        // Simplified extraction using regex - improved to catch more variations
+        const ratingMatch = html.match(/"ratingValue":\s*"?([\d.]+)"?/) || 
+                           html.match(/aria-label="([\d.]+) star rating"/) ||
+                           html.match(/([\d.]+) star rating/);
+                           
+        const reviewCountMatch = html.match(/"reviewCount":\s*"?(\d+)"?/) || 
+                                html.match(/(\d+)\s+reviews/i);
 
         const rating = ratingMatch ? parseFloat(ratingMatch[1]) : null;
         const reviewCount = reviewCountMatch ? parseInt(reviewCountMatch[1], 10) : null;

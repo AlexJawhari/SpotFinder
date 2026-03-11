@@ -462,6 +462,20 @@ const addLocationImage = async (req, res, next) => {
       return res.status(400).json({ error: 'imageUrl is required' });
     }
 
+    // Security check: Basic validation for image URL / format
+    // In a production app with direct uploads, we would check the buffer.
+    // Since images go through Cloudinary first, we ensure the URL from Cloudinary looks safe.
+    const allowedExtensions = ['.jpg', '.jpeg', '.png', '.webp'];
+    const lowerUrl = imageUrl.toLowerCase();
+    const hasValidExtension = allowedExtensions.some(ext => lowerUrl.endsWith(ext));
+    
+    // Very basic check to ensure it's a Cloudinary URL if we want to be strict
+    const isCloudinary = imageUrl.includes('cloudinary.com');
+
+    if (!hasValidExtension || !isCloudinary) {
+      return res.status(400).json({ error: 'Security: Invalid image source or format.' });
+    }
+
     // 1. Get current images
     const { data: location, error: fetchError } = await supabase
       .from('locations')

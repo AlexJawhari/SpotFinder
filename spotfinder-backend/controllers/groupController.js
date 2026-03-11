@@ -188,7 +188,9 @@ exports.deleteGroup = async (req, res) => {
             return res.status(404).json({ error: 'Group not found' });
         }
 
-        if (group.created_by !== req.user.id && req.user.email !== 'alexjw99@gmail.com' && req.user.email !== 'admin@gmail.com') {
+        const isAdmin = req.user.is_admin === true;
+
+        if (group.created_by !== req.user.id && !isAdmin) {
             return res.status(403).json({ error: 'Not authorized to delete this group' });
         }
 

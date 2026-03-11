@@ -13,7 +13,7 @@ const Header = () => {
     };
 
     return (
-        <header className="min-h-[72px] flex flex-col justify-center bg-gradient-to-b from-white/95 via-white/85 to-white/75 backdrop-blur-xl shadow-2xl sticky top-0 z-50 border-b-2 border-white/60 relative overflow-hidden">
+        <header className="min-h-[72px] flex flex-col justify-center bg-gradient-to-b from-white/95 via-white/85 to-white/75 dark:from-slate-900/95 dark:via-slate-900/85 dark:to-slate-900/75 backdrop-blur-xl shadow-2xl sticky top-0 z-50 border-b-2 border-white/60 dark:border-white/10 relative overflow-hidden">
             {/* Web 2.0 Gloss - Frutiger Aero auroras and lens flares */}
             <div className="absolute top-0 left-0 w-full h-full pointer-events-none will-change-transform" style={{ transform: 'translateZ(0)' }}>
                 {/* Aurora effect - Static for performance */}
@@ -51,19 +51,19 @@ const Header = () => {
                 </Link>
 
                 <nav className="flex flex-wrap items-center gap-3 sm:gap-5">
-                    <Link to="/" className="relative text-slate-800 hover:text-[#4FC3F7] transition-all px-4 py-2.5 rounded-xl hover:bg-gradient-to-br hover:from-[#4FC3F7]/15 hover:to-[#66BB6A]/15 group border border-transparent hover:border-white/40 hover:shadow-lg" style={{ willChange: 'transform', transform: 'translateZ(0)' }}>
+                    <Link to="/" className="relative text-slate-800 dark:text-slate-200 hover:text-[#4FC3F7] transition-all px-4 py-2.5 rounded-xl hover:bg-gradient-to-br hover:from-[#4FC3F7]/15 hover:to-[#66BB6A]/15 group border border-transparent hover:border-white/40 hover:shadow-lg" style={{ willChange: 'transform', transform: 'translateZ(0)' }}>
                         <span className="relative z-10 font-medium">Locations</span>
                         <div className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-white/50 to-transparent rounded-t-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
                     </Link>
-                    <Link to="/events" className="relative text-slate-800 hover:text-[#4FC3F7] transition-all px-4 py-2.5 rounded-xl hover:bg-gradient-to-br hover:from-[#4FC3F7]/15 hover:to-[#66BB6A]/15 group border border-transparent hover:border-white/40 hover:shadow-lg" style={{ willChange: 'transform', transform: 'translateZ(0)' }}>
+                    <Link to="/events" className="relative text-slate-800 dark:text-slate-200 hover:text-[#4FC3F7] transition-all px-4 py-2.5 rounded-xl hover:bg-gradient-to-br hover:from-[#4FC3F7]/15 hover:to-[#66BB6A]/15 group border border-transparent hover:border-white/40 hover:shadow-lg" style={{ willChange: 'transform', transform: 'translateZ(0)' }}>
                         <span className="relative z-10 font-medium">Events</span>
                         <div className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-white/50 to-transparent rounded-t-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
                     </Link>
-                    <Link to="/community" className="relative text-slate-800 hover:text-[#4FC3F7] transition-all px-4 py-2.5 rounded-xl hover:bg-gradient-to-br hover:from-[#4FC3F7]/15 hover:to-[#66BB6A]/15 group border border-transparent hover:border-white/40 hover:shadow-lg" style={{ willChange: 'transform', transform: 'translateZ(0)' }}>
+                    <Link to="/community" className="relative text-slate-800 dark:text-slate-200 hover:text-[#4FC3F7] transition-all px-4 py-2.5 rounded-xl hover:bg-gradient-to-br hover:from-[#4FC3F7]/15 hover:to-[#66BB6A]/15 group border border-transparent hover:border-white/40 hover:shadow-lg" style={{ willChange: 'transform', transform: 'translateZ(0)' }}>
                         <span className="relative z-10 font-medium">Community</span>
                         <div className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-white/50 to-transparent rounded-t-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
                     </Link>
-                    <Link to="/groups" className="relative text-slate-800 hover:text-[#4FC3F7] transition-all px-4 py-2.5 rounded-xl hover:bg-gradient-to-br hover:from-[#4FC3F7]/15 hover:to-[#66BB6A]/15 group border border-transparent hover:border-white/40 hover:shadow-lg" style={{ willChange: 'transform', transform: 'translateZ(0)' }}>
+                    <Link to="/groups" className="relative text-slate-800 dark:text-slate-200 hover:text-[#4FC3F7] transition-all px-4 py-2.5 rounded-xl hover:bg-gradient-to-br hover:from-[#4FC3F7]/15 hover:to-[#66BB6A]/15 group border border-transparent hover:border-white/40 hover:shadow-lg" style={{ willChange: 'transform', transform: 'translateZ(0)' }}>
                         <span className="relative z-10 font-medium">Groups</span>
                         <div className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-white/50 to-transparent rounded-t-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
                     </Link>

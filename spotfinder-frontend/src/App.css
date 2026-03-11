@@ -12,15 +12,12 @@
   width: 100%;
 }
 
-/* In-app background so it can never cover content (unlike body pseudos) */
+/* In-app background container - transparent by default to allow index.css body background to show through */
 .app-bg {
   position: fixed;
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 25%, #A5D6A7 50%, #81C784 75%, #E8F5E9 100%);
-  background-size: 400% 400%;
-  animation: gradientShift 20s ease infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {

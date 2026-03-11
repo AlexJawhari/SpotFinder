@@ -246,9 +246,9 @@ const LocationDetailPage = () => {
                         </div>
 
                         {loadingExternal ? (
-                            <div className="flex items-center gap-4 py-4 p-6 bg-white/30 rounded-3xl">
+                            <div className="flex items-center gap-4 py-4 p-6 bg-white/30 dark:bg-slate-800/40 rounded-3xl">
                                 <LoadingSpinner size="md" />
-                                <span className="text-slate-500 font-bold italic animate-pulse">Syncing with external networks...</span>
+                                <span className="text-slate-500 dark:text-sky-300 font-bold italic animate-pulse">Syncing with external networks...</span>
                             </div>
                         ) : externalReviews && !externalReviews.error ? (
                             <div className="flex items-center gap-10">
