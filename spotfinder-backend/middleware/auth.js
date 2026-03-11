@@ -11,7 +11,10 @@ const authenticate = (req, res, next) => {
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = { id: decoded.userId };
+    req.user = { 
+      id: decoded.userId,
+      is_admin: decoded.is_admin 
+    };
     next();
   } catch (error) {
     return res.status(401).json({ error: 'Invalid or expired token' });

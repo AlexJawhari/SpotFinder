@@ -5,8 +5,8 @@ const jwt = require('jsonwebtoken');
 
 const { supabase } = require('../config/database');
 
-const createToken = (userId) => {
-  return jwt.sign({ userId }, process.env.JWT_SECRET, { expiresIn: '1h' });
+const createToken = (userId, is_admin) => {
+  return jwt.sign({ userId, is_admin }, process.env.JWT_SECRET, { expiresIn: '1h' });
 };
 
 const sanitizeUser = (user) => {
@@ -20,6 +20,7 @@ const sanitizeUser = (user) => {
     preferred_amenities: user.preferred_amenities,
     reputation_score: user.reputation_score,
     profile_image: user.profile_image,
+    is_admin: user.is_admin,
     created_at: user.created_at,
   };
 };
@@ -68,7 +69,7 @@ const register = async (req, res, next) => {
       throw createError;
     }
 
-    const token = createToken(created.id);
+    const token = createToken(created.id, created.is_admin);
 
     res.status(201).json({
       token,
@@ -107,7 +108,7 @@ const login = async (req, res, next) => {
       return res.status(401).json({ error: 'Invalid email or password' });
     }
 
-    const token = createToken(user.id);
+    const token = createToken(user.id, user.is_admin);
 
     res.json({
       token,

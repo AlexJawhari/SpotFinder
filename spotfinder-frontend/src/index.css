@@ -9,18 +9,18 @@
   --color-accent: #F9A8D4; /* Blush pink - romantic and warm */
   --color-tertiary: #FFD54F; /* Bright yellow - sunshine */
   --color-aqua: #26C6DA; /* Aqua blue - Y2K futurism */
-  --color-background: #E8F5E9; /* Light green tint - nature */
-  --color-surface: #FFFFFF;
-  --color-text: #1A237E; /* Deep blue - readable */
-  --color-text-light: #546E7A; /* Muted blue-gray */
-  --color-border: #B2DFDB; /* Soft teal border */
+  --color-background: #FFFFFF; /* Pure white for that glossy Aero look */
+  --color-surface: rgba(255, 255, 255, 0.9);
+  --color-text: #0F172A; /* Slate 900 for high contrast on white */
+  --color-text-light: #64748B; /* Slate 500 */
+  --color-border: rgba(79, 195, 247, 0.2);
   
   /* Gradient Colors - Y2K Futurism + Frutiger Aero */
   --gradient-primary: linear-gradient(135deg, #4FC3F7 0%, #66BB6A 100%);
   --gradient-aqua: linear-gradient(135deg, #26C6DA 0%, #4FC3F7 100%);
   --gradient-nature: linear-gradient(135deg, #66BB6A 0%, #4FC3F7 50%, #26C6DA 100%);
   --gradient-romantic: linear-gradient(135deg, #F9A8D4 0%, #FFD54F 100%);
-  --gradient-vista: linear-gradient(to bottom, #E3F2FD 0%, #BBDEFB 50%, #90CAF9 100%);
+  --gradient-vista: linear-gradient(to bottom, #FFFFFF 0%, #E0F2F1 100%);
 
   /* Spacing */
   --spacing-xs: 0.25rem;
@@ -65,7 +65,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: var(--color-text);
-  background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 25%, #A5D6A7 50%, #81C784 75%, #E8F5E9 100%);
+  background: linear-gradient(135deg, #FFFFFF 0%, #F0FDF4 25%, #F0F9FF 50%, #FDF2F8 75%, #FFFFFF 100%);
   background-size: 400% 400%;
   background-attachment: fixed;
   min-height: 100vh;

@@ -252,9 +252,9 @@ const LocationDetailPage = () => {
                             </div>
                         ) : externalReviews && !externalReviews.error ? (
                             <div className="flex items-center gap-10">
-                                <div className="text-center bg-white/80 dark:bg-slate-800/80 p-8 rounded-[2rem] border-2 border-white shadow-2xl scale-110 ml-2">
+                                <div className="text-center bg-white/95 dark:bg-slate-800/80 p-8 rounded-[2rem] border-2 border-white shadow-2xl scale-110 ml-2 shadow-sky-100/50 dark:shadow-none">
                                     <div className="text-5xl font-black text-red-500 mb-1 drop-shadow-sm">{externalReviews.rating || '—'}</div>
-                                    <div className="text-[10px] uppercase font-black text-slate-400 tracking-[0.2em] mt-1">Stars</div>
+                                    <div className="text-[10px] uppercase font-black text-slate-400 dark:text-slate-500 tracking-[0.2em] mt-1">Stars</div>
                                 </div>
                                 <div>
                                     <div className="text-xl font-black text-slate-800 dark:text-slate-100 mb-2">
@@ -276,7 +276,7 @@ const LocationDetailPage = () => {
                                 </div>
                             </div>
                         ) : (
-                            <div className="p-8 bg-slate-100/50 dark:bg-slate-800/50 rounded-3xl text-slate-400 font-bold italic text-center">
+                            <div className="p-8 bg-white/50 dark:bg-slate-800/50 rounded-3xl text-slate-400 font-bold italic text-center border border-white/40">
                                 {externalReviews?.error || "We couldn't find external ratings for this specific location today."}
                             </div>
                         )}
@@ -311,10 +311,10 @@ const LocationDetailPage = () => {
                                     onChange={handleFileUpload}
                                     disabled={uploading}
                                 />
-                                <div className={`flex items-center gap-3 px-8 py-3.5 rounded-full transition-all shadow-2xl hover:scale-105 active:scale-95
+                                <div className={`flex items-center gap-3 px-8 py-3.5 rounded-full transition-all shadow-2xl hover:scale-105 active:scale-95 border-2 
                                     ${uploading 
-                                        ? 'bg-slate-200 text-slate-400 cursor-not-allowed' 
-                                        : 'bg-gradient-to-br from-[#7DD3FC] via-[#0EA5E9] to-[#0284C7] text-white border-2 border-white/40 shadow-sky-300/50'
+                                        ? 'bg-slate-100 text-slate-400 border-white/20' 
+                                        : 'bg-gradient-to-br from-[#7DD3FC] via-[#0EA5E9] to-[#0284C7] text-white border-white/50 shadow-sky-200'
                                     }`}>
                                     {uploading ? <LoadingSpinner size="sm" /> : <FaCamera className="text-xl" />}
                                     <span className="font-black text-lg tracking-tight">{uploading ? 'Processing...' : 'Add Your Photo'}</span>
@@ -333,7 +333,7 @@ const LocationDetailPage = () => {
                                     </div>
                                 ))
                             ) : (
-                                <div className="col-span-full py-24 bg-slate-50 dark:bg-slate-800/40 rounded-[3rem] border-4 border-dashed border-slate-200 dark:border-slate-700 flex flex-col items-center justify-center text-slate-300">
+                                <div className="col-span-full py-24 bg-white/40 dark:bg-slate-800/40 rounded-[3rem] border-4 border-dashed border-sky-100/50 dark:border-slate-700 flex flex-col items-center justify-center text-slate-300">
                                     <FaCamera size={80} className="mb-6 opacity-10" />
                                     <p className="font-black text-2xl italic tracking-tighter opacity-30">The vibe is waiting for your lens...</p>
                                 </div>

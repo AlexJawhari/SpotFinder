@@ -8,33 +8,40 @@ const axios = require('axios');
 async function scrapeYelpData(businessName, city) {
     try {
         const query = encodeURIComponent(`${businessName} ${city} yelp`);
-        // Use a generic user agent to look like a browser
         const headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36'
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
+            'Accept-Language': 'en-US,en;q=0.9'
         };
 
-        // We'll try to find the Yelp page first via Bing/DuckDuckGo or direct Yelp search
-        // For simplicity and speed in this demo, we'll try to hit the Yelp search page directly 
-        // with a mobile user agent which sometimes has fewer blocks.
-        const yelpSearchUrl = `https://www.yelp.com/search?find_desc=${encodeURIComponent(businessName)}&find_loc=${encodeURIComponent(city)}`;
-        
-        const response = await axios.get(yelpSearchUrl, { headers, timeout: 5000 });
-        const html = response.data;
+        // Step 1: Search via DuckDuckGo to find the Yelp link - less likely to block
+        const searchUrl = `https://duckduckgo.com/html/?q=${query}`;
+        const searchResponse = await axios.get(searchUrl, { headers, timeout: 5000 });
+        const searchHtml = searchResponse.data;
 
-        // Simplified extraction using regex - improved to catch more variations
+        // Find the first yelp.com/biz/ link
+        const yelpLinkMatch = searchHtml.match(/https?:\/\/(?:www\.)?yelp\.com\/biz\/([^"&?\s]+)/);
+        if (!yelpLinkMatch) {
+            return { error: 'No Yelp page found for this location.', source: 'Yelp' };
+        }
+
+        const yelpUrl = yelpLinkMatch[0];
+        
+        // Step 2: Fetch the Yelp business page directly
+        const yelpResponse = await axios.get(yelpUrl, { headers, timeout: 5000 });
+        const html = yelpResponse.data;
+
+        // Extract rating and review count
         const ratingMatch = html.match(/"ratingValue":\s*"?([\d.]+)"?/) || 
                            html.match(/aria-label="([\d.]+) star rating"/) ||
                            html.match(/([\d.]+) star rating/);
                            
         const reviewCountMatch = html.match(/"reviewCount":\s*"?(\d+)"?/) || 
-                                html.match(/(\d+)\s+reviews/i);
+                                html.match(/(\d+)\s+reviews/i) ||
+                                html.match(/(\d+)\s+Reviews/);
 
         const rating = ratingMatch ? parseFloat(ratingMatch[1]) : null;
         const reviewCount = reviewCountMatch ? parseInt(reviewCountMatch[1], 10) : null;
-
-        // Also try to find a link to the actual yelp page
-        const yelpLinkMatch = html.match(/href="(\/biz\/[^"]+)"/);
-        const yelpUrl = yelpLinkMatch ? `https://www.yelp.com${yelpLinkMatch[1]}` : null;
 
         return {
             rating,
@@ -45,7 +52,7 @@ async function scrapeYelpData(businessName, city) {
     } catch (error) {
         console.error('Yelp scraping failed:', error.message);
         return {
-            error: 'Could not fetch external reviews at this time.',
+            error: 'External ratings temporarily unavailable.',
             source: 'Yelp'
         };
     }
