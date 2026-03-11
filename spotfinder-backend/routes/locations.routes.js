@@ -54,6 +54,17 @@ router.post(
 router.put('/:id', authenticate, updateLocation);
 router.delete('/:id', authenticate, deleteLocation);
 router.post('/:id/view', incrementViewCount);
+router.post('/:id/images', authenticate, [
+  body('imageUrl').isURL()
+], (req, res, next) => {
+  const { addLocationImage } = require('../controllers/locationController');
+  return addLocationImage(req, res, next);
+});
+
+router.get('/:id/external-reviews', (req, res, next) => {
+  const { getExternalReviews } = require('../controllers/locationController');
+  return getExternalReviews(req, res, next);
+});
 
 module.exports = router;
 

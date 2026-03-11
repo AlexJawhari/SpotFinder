@@ -15,7 +15,16 @@ export const CATEGORIES = [
     { id: 'library', label: 'Library' },
     { id: 'coworking', label: 'Coworking Space' },
     { id: 'restaurant', label: 'Restaurant' },
+    { id: 'food', label: 'Food & Dining' },
     { id: 'park', label: 'Park' },
+    { id: 'bar', label: 'Bar / Nightlife' },
+    { id: 'gym', label: 'Gym / Fitness' },
+    { id: 'shop', label: 'Shopping' },
+    { id: 'pharmacy', label: 'Pharmacy' },
+    { id: 'education', label: 'Education' },
+    { id: 'museum', label: 'Museum / Gallery' },
+    { id: 'hotel', label: 'Hotel' },
+    { id: 'cinema', label: 'Cinema / Theatre' },
     { id: 'other', label: 'Other' },
 ];
 
@@ -26,7 +35,7 @@ export const SORT_OPTIONS = [
     { id: 'newest', label: 'Newest' },
 ];
 
-export const RADIUS_OPTIONS = [1, 3, 5, 10, 25];
+export const RADIUS_OPTIONS = [1, 3, 5, 10, 25, 50];
 
 export const RATING_LABELS = {
     1: 'Poor',

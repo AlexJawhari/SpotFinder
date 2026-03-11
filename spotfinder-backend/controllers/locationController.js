@@ -150,6 +150,13 @@ const listLocations = async (req, res, next) => {
       );
 
       finalResults = [...finalResults, ...validExternal];
+
+      // Background cache newly found search results
+      if (validExternal.length > 0) {
+        cacheExternalLocations(validExternal).catch(err => 
+          console.error('Background search cache failed:', err.message)
+        );
+      }
     }
 
     // 3. External OSM Discover (no text query)
@@ -158,7 +165,9 @@ const listLocations = async (req, res, next) => {
     if (!search && hasCoords && wantsDiscover) {
       try {
         const { discoverExternalLocations } = require('../utils/osmService');
-        const externalDiscover = await discoverExternalLocations(category, latitude, longitude, radiusKm);
+        // Use at least 12km for discover so the map always has a decent baseline of POIs
+        const discoverRadius = Math.max(radiusKm, 12);
+        const externalDiscover = await discoverExternalLocations(category, latitude, longitude, discoverRadius);
 
         const validExternal = (externalDiscover || []).filter(ext =>
           !finalResults.some(db => {
@@ -170,6 +179,13 @@ const listLocations = async (req, res, next) => {
         );
 
         finalResults = [...finalResults, ...validExternal];
+
+        // Background cache newly found discovery results
+        if (validExternal.length > 0) {
+          cacheExternalLocations(validExternal).catch(err => 
+            console.error('Background discover cache failed:', err.message)
+          );
+        }
       } catch (discoverErr) {
         console.error('Discover locations failed (non-fatal):', discoverErr?.message || discoverErr);
       }
@@ -400,6 +416,106 @@ const incrementViewCount = async (req, res, next) => {
   }
 };
 
+const cacheExternalLocations = async (locations) => {
+  if (!locations || locations.length === 0) return;
+
+  try {
+    const toCache = locations.map(loc => ({
+      id: loc.id,
+      name: loc.name,
+      description: loc.description,
+      address: loc.address,
+      city: loc.city,
+      latitude: loc.latitude,
+      longitude: loc.longitude,
+      category: loc.category,
+      amenities: loc.amenities,
+      images: loc.images,
+      created_by: null // External source
+    }));
+
+    // Perform upsert. Even if RLS prevents this for 'anon', 
+    // it will be tried if the user has a more permissive role 
+    // or if the service role key is added later.
+    const { error } = await supabase
+      .from('locations')
+      .upsert(toCache, { onConflict: 'id' });
+
+    if (error) {
+       // Silently fail if RLS prevents it, but keep logged for dev.
+       // In production with a service role key, this will start working.
+       console.log(`Cache Note: Background cache check for ${locations.length} spots resulted in: ${error.message}`);
+    } else {
+      console.log(`Successfully cached/verified ${locations.length} locations in database.`);
+    }
+  } catch (err) {
+    console.error('Cache function error:', err.message);
+  }
+};
+
+const addLocationImage = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { imageUrl } = req.body;
+
+    if (!imageUrl) {
+      return res.status(400).json({ error: 'imageUrl is required' });
+    }
+
+    // 1. Get current images
+    const { data: location, error: fetchError } = await supabase
+      .from('locations')
+      .select('images')
+      .eq('id', id)
+      .single();
+
+    if (fetchError) throw fetchError;
+    if (!location) return res.status(404).json({ error: 'Location not found' });
+
+    const currentImages = location.images || [];
+    const updatedImages = [...currentImages, imageUrl];
+
+    // 2. Update location
+    const { data, error: updateError } = await supabase
+      .from('locations')
+      .update({ images: updatedImages })
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (updateError) throw updateError;
+
+    res.json(data);
+  } catch (err) {
+    next(err);
+  }
+};
+
+const getExternalReviews = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    // 1. Fetch location details to get name and city
+    const { data: location, error: fetchError } = await supabase
+      .from('locations')
+      .select('name, city')
+      .eq('id', id)
+      .single();
+
+    if (fetchError || !location) {
+      return res.status(404).json({ error: 'Location not found' });
+    }
+
+    // 2. Scrape Yelp data
+    const { scrapeYelpData } = require('../utils/yelpScraper');
+    const yelpData = await scrapeYelpData(location.name, location.city);
+
+    res.json(yelpData);
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
   listLocations,
   getLocationById,
@@ -408,5 +524,7 @@ module.exports = {
   deleteLocation,
   nearbyLocations,
   incrementViewCount,
+  addLocationImage,
+  getExternalReviews,
 };
 

@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -24,9 +25,15 @@ import ProfilePage from './pages/ProfilePage';
 import SettingsPage from './pages/SettingsPage';
 
 import './App.css';
-import ErrorBoundary from './components/common/ErrorBoundary';
+import { useThemeStore } from './store/themeStore';
 
 function App() {
+  const { initTheme } = useThemeStore();
+
+  useEffect(() => {
+    initTheme();
+  }, [initTheme]);
+
   return (
     <ErrorBoundary>
       <div className="app-layout">

@@ -58,4 +58,16 @@ export const locationService = {
         const response = await api.post(`/locations/${id}/view`);
         return response.data;
     },
+
+    // Add photo to location
+    addPhoto: async (id, imageUrl) => {
+        const response = await api.post(`/locations/${id}/images`, { imageUrl });
+        return response.data;
+    },
+
+    // Get external reviews (Yelp)
+    getExternalReviews: async (id) => {
+        const response = await api.get(`/locations/${id}/external-reviews`);
+        return response.data;
+    },
 };

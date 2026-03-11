@@ -1,9 +1,11 @@
 import { Link } from 'react-router-dom';
-import { FaMapMarkedAlt, FaUser, FaSignOutAlt } from 'react-icons/fa';
+import { FaMapMarkedAlt, FaUser, FaSignOutAlt, FaMoon, FaSun } from 'react-icons/fa';
 import { useAuthStore } from '../../store/authStore';
+import { useThemeStore } from '../../store/themeStore';
 
 const Header = () => {
     const { user, isAuthenticated, logout } = useAuthStore();
+    const { isDarkMode, toggleDarkMode } = useThemeStore();
 
     const handleLogout = () => {
         logout();
@@ -65,6 +67,17 @@ const Header = () => {
                         <span className="relative z-10 font-medium">Groups</span>
                         <div className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-white/50 to-transparent rounded-t-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
                     </Link>
+
+                    {/* Theme Toggle */}
+                    <button
+                        onClick={toggleDarkMode}
+                        className="relative p-2.5 rounded-full glass-gloss border border-white/40 shadow-lg hover:shadow-cyan-200/50 hover:scale-110 transition-all text-slate-700 dark:text-sky-300"
+                        title={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+                    >
+                        <div className="relative z-10">
+                            {isDarkMode ? <FaSun className="text-yellow-300 drop-shadow-[0_0_8px_rgba(253,224,71,0.6)]" /> : <FaMoon className="text-slate-600 drop-shadow-[0_0_8px_rgba(71,85,105,0.4)]" />}
+                        </div>
+                    </button>
 
                     {isAuthenticated ? (
                         <>

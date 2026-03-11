@@ -14,9 +14,12 @@ const getCategoryIcon = (category) => {
 
     switch (category?.toLowerCase()) {
         case 'library':
-        case 'education':
             emoji = '📚';
             color = '#8b5cf6'; // violet-500
+            break;
+        case 'education':
+            emoji = '🎓';
+            color = '#7c3aed'; // violet-600
             break;
         case 'park':
         case 'leisure':
@@ -48,6 +51,43 @@ const getCategoryIcon = (category) => {
         case 'office':
             emoji = '🏢';
             color = '#64748b'; // slate-500
+            break;
+        case 'shop':
+        case 'shopping':
+            emoji = '🛍️';
+            color = '#f97316'; // orange-500
+            break;
+        case 'pharmacy':
+            emoji = '💊';
+            color = '#14b8a6'; // teal-500
+            break;
+        case 'museum':
+            emoji = '🏛️';
+            color = '#6366f1'; // indigo-500
+            break;
+        case 'hotel':
+            emoji = '🏨';
+            color = '#0ea5e9'; // sky-500
+            break;
+        case 'cinema':
+            emoji = '🎬';
+            color = '#e11d48'; // rose-600
+            break;
+        case 'hospital':
+            emoji = '🏥';
+            color = '#dc2626'; // red-600
+            break;
+        case 'bank':
+            emoji = '🏦';
+            color = '#059669'; // emerald-600
+            break;
+        case 'gas_station':
+            emoji = '⛽';
+            color = '#78716c'; // stone-500
+            break;
+        case 'bookstore':
+            emoji = '📖';
+            color = '#92400e'; // amber-800
             break;
         default:
             emoji = '📍';
