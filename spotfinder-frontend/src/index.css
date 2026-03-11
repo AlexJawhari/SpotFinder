@@ -4,23 +4,19 @@
 
 :root {
   /* Frutiger Aero + Y2K Futurism Color Palette - Inspired by frutigeraeroarchive.org */
-  --color-primary: #4FC3F7; /* Vibrant sky blue - Windows Vista style */
-  --color-secondary: #66BB6A; /* Nature green - grass and nature */
-  --color-accent: #F9A8D4; /* Blush pink - romantic and warm */
-  --color-tertiary: #FFD54F; /* Bright yellow - sunshine */
-  --color-aqua: #26C6DA; /* Aqua blue - Y2K futurism */
-  --color-background: #FFFFFF; /* Pure white for that glossy Aero look */
-  --color-surface: rgba(255, 255, 255, 0.9);
-  --color-text: #0F172A; /* Slate 900 for high contrast on white */
-  --color-text-light: #64748B; /* Slate 500 */
-  --color-border: rgba(79, 195, 247, 0.2);
+  --color-primary: #38BDF8; /* Sky blue */
+  --color-secondary: #4ADE80; /* Nature green */
+  --color-accent: #F472B6; /* Pink */
+  --color-background: #FFFFFF; /* Pure white */
+  --color-surface: rgba(255, 255, 255, 0.95);
+  --color-text: #1E293B; /* Slate 800 */
+  --color-text-light: #64748B;
+  --color-border: rgba(56, 189, 248, 0.15);
   
-  /* Gradient Colors - Y2K Futurism + Frutiger Aero */
-  --gradient-primary: linear-gradient(135deg, #4FC3F7 0%, #66BB6A 100%);
-  --gradient-aqua: linear-gradient(135deg, #26C6DA 0%, #4FC3F7 100%);
-  --gradient-nature: linear-gradient(135deg, #66BB6A 0%, #4FC3F7 50%, #26C6DA 100%);
-  --gradient-romantic: linear-gradient(135deg, #F9A8D4 0%, #FFD54F 100%);
-  --gradient-vista: linear-gradient(to bottom, #FFFFFF 0%, #E0F2F1 100%);
+  /* Aero Glossy Gradients */
+  --gradient-primary: linear-gradient(135deg, #38BDF8 0%, #4ADE80 100%);
+  --gradient-vista: linear-gradient(to bottom, #FFFFFF 0%, #F1F5F9 100%);
+  --gradient-glass: linear-gradient(to bottom, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.3) 100%);
 
   /* Spacing */
   --spacing-xs: 0.25rem;
@@ -44,13 +40,13 @@
 }
 
 .dark {
-  --color-background: #0F172A; /* Deep slate */
-  --color-surface: #1E293B;
-  --color-text: #F1F5F9;
+  --color-background: #020617; /* Solarized dark blue */
+  --color-surface: rgba(30, 41, 59, 0.85);
+  --color-text: #F8FAFC;
   --color-text-light: #94A3B8;
-  --color-border: #334155;
+  --color-border: rgba(56, 189, 248, 0.3);
   
-  --gradient-vista: linear-gradient(to bottom, #1E293B 0%, #0F172A 100%);
+  --gradient-vista: linear-gradient(to bottom, #1E293B 0%, #020617 100%);
   --color-primary: #38BDF8;
 }
 
@@ -65,14 +61,10 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: var(--color-text);
-  background: linear-gradient(135deg, #FFFFFF 0%, #F0FDF4 25%, #F0F9FF 50%, #FDF2F8 75%, #FFFFFF 100%);
-  background-size: 400% 400%;
-  background-attachment: fixed;
+  background: white;
   min-height: 100vh;
   position: relative;
   overflow-x: hidden;
-  will-change: background-position;
-  transform: translateZ(0);
 }
 
 .dark body {
@@ -97,34 +89,22 @@ body {
 body::before {
   content: '';
   position: fixed;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: 
-    radial-gradient(circle at 20% 50%, rgba(79, 195, 247, 0.06) 0%, transparent 50%),
-    radial-gradient(circle at 80% 80%, rgba(102, 187, 106, 0.08) 0%, transparent 50%),
-    radial-gradient(circle at 40% 20%, rgba(38, 198, 218, 0.05) 0%, transparent 50%),
-    radial-gradient(circle at 60% 70%, rgba(102, 187, 106, 0.04) 0%, transparent 40%);
-  pointer-events: none;
-  z-index: -1;
-  will-change: transform;
-  transform: translateZ(0);
-}
-
-body::after {
-  content: '';
-  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: 
-    radial-gradient(circle at 10% 20%, rgba(102, 187, 106, 0.03) 0%, transparent 30%),
-    radial-gradient(circle at 90% 80%, rgba(79, 195, 247, 0.02) 0%, transparent 30%);
+  background: 
+    radial-gradient(circle at 15% 15%, rgba(56, 189, 248, 0.08) 0%, transparent 40%),
+    radial-gradient(circle at 85% 85%, rgba(74, 222, 128, 0.1) 0%, transparent 40%),
+    radial-gradient(circle at 50% 50%, rgba(244, 114, 182, 0.05) 0%, transparent 50%);
   pointer-events: none;
   z-index: -1;
-  transform: translateZ(0);
+}
+
+.dark body::before {
+  background: 
+    radial-gradient(circle at 10% 10%, rgba(56, 189, 248, 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 90% 90%, rgba(168, 85, 247, 0.15) 0%, transparent 50%);
 }
 
 /* Web 2.0 Gloss - Shine animation */

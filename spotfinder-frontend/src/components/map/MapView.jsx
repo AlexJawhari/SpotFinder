@@ -9,120 +9,12 @@ import { DEFAULT_MAP_CENTER, MAP_ZOOM } from '../../utils/constants';
 
 // Helper to get icon based on category
 const getCategoryIcon = (category) => {
-    let emoji = '📍';
-    let color = '#3b82f6'; // blue-500
-
-    switch (category?.toLowerCase()) {
-        case 'library':
-            emoji = '📚';
-            color = '#8b5cf6'; // violet-500
-            break;
-        case 'education':
-            emoji = '🎓';
-            color = '#7c3aed'; // violet-600
-            break;
-        case 'park':
-        case 'leisure':
-            emoji = '🌳';
-            color = '#22c55e'; // green-500
-            break;
-        case 'cafe':
-        case 'coffee':
-            emoji = '☕';
-            color = '#f59e0b'; // amber-500
-            break;
-        case 'restaurant':
-        case 'food':
-            emoji = '🍽️';
-            color = '#ef4444'; // red-500
-            break;
-        case 'bar':
-        case 'pub':
-        case 'nightlife':
-            emoji = '🍺';
-            color = '#a855f7'; // purple-500
-            break;
-        case 'gym':
-        case 'fitness':
-            emoji = '🏋️';
-            color = '#ec4899'; // pink-500
-            break;
-        case 'coworking':
-        case 'office':
-            emoji = '🏢';
-            color = '#64748b'; // slate-500
-            break;
-        case 'shop':
-        case 'shopping':
-            emoji = '🛍️';
-            color = '#f97316'; // orange-500
-            break;
-        case 'pharmacy':
-            emoji = '💊';
-            color = '#14b8a6'; // teal-500
-            break;
-        case 'museum':
-            emoji = '🏛️';
-            color = '#6366f1'; // indigo-500
-            break;
-        case 'hotel':
-            emoji = '🏨';
-            color = '#0ea5e9'; // sky-500
-            break;
-        case 'cinema':
-            emoji = '🎬';
-            color = '#e11d48'; // rose-600
-            break;
-        case 'hospital':
-            emoji = '🏥';
-            color = '#dc2626'; // red-600
-            break;
-        case 'bank':
-            emoji = '🏦';
-            color = '#059669'; // emerald-600
-            break;
-        case 'gas_station':
-            emoji = '⛽';
-            color = '#78716c'; // stone-500
-            break;
-        case 'bookstore':
-            emoji = '📖';
-            color = '#92400e'; // amber-800
-            break;
-        default:
-            emoji = '📍';
-            color = '#3b82f6';
-    }
-
-    return L.divIcon({
-        className: 'custom-marker-icon',
-        html: `
-            <div style="
-                background-color: white;
-                border: 2px solid ${color};
-                border-radius: 50%;
-                width: 30px;
-                height: 30px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 16px;
-                box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            ">
-                ${emoji}
-            </div>
-            <div style="
-                width: 0; 
-                height: 0; 
-                border-left: 6px solid transparent;
-                border-right: 6px solid transparent;
-                border-top: 8px solid ${color};
-                margin: -2px auto 0;
-            "></div>
-        `,
-        iconSize: [30, 40],
-        iconAnchor: [15, 40],
-        popupAnchor: [0, -40]
+    return L.icon({
+        iconUrl: '/assets/icons/aero_map_marker.png',
+        iconSize: [42, 42],
+        iconAnchor: [21, 42],
+        popupAnchor: [0, -42],
+        className: 'aero-marker-pulse'
     });
 };
 
@@ -196,19 +88,33 @@ function ViewportEvents({ onViewportChanged }) {
     return null;
 }
 
-const selectedPinIcon = L.divIcon({
+const selectedPinIcon = L.icon({
+    iconUrl: '/assets/icon_locations_selected.png', // I'll generate this or use a variant
+    iconSize: [52, 52],
+    iconAnchor: [26, 52],
+    popupAnchor: [0, -52],
+    className: 'aero-marker-pulse shadow-glow'
+});
+
+// Since I don't have that specific file yet, I'll use a glossy div for now but better than before
+const selectedPinIconAero = L.divIcon({
     className: '',
-    iconSize: [28, 28],
-    iconAnchor: [14, 14],
+    iconSize: [42, 42],
+    iconAnchor: [21, 21],
     html: `
-      <div style="
-        width: 28px;
-        height: 28px;
-        border-radius: 9999px;
-        background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.95), rgba(79,195,247,0.85) 45%, rgba(102,187,106,0.85) 100%);
-        border: 2px solid rgba(255,255,255,0.9);
-        box-shadow: 0 8px 18px rgba(0,0,0,0.22), 0 0 0 6px rgba(79,195,247,0.18);
-      "></div>
+      <div class="aero-marker-pulse" style="
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        background: radial-gradient(circle at 30% 30%, #FFFFFF, #38BDF8 60%, #0EA5E9 100%);
+        border: 3px solid white;
+        box-shadow: 0 0 20px rgba(56, 189, 248, 0.6), inset 0 0 10px rgba(255,255,255,0.8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      ">
+        <div style="width: 12px; height: 12px; background: white; border-radius: 50%; box-shadow: 0 0 10px white;"></div>
+      </div>
     `,
 });
 
@@ -268,7 +174,7 @@ const MapView = ({ locations = [], onMarkerClick, center, zoom, selectedLocation
                 <Marker
                     key={location.id}
                     position={[parseFloat(location.latitude), parseFloat(location.longitude)]}
-                    icon={location.id === selectedLocationId ? selectedPinIcon : getCategoryIcon(location.category)}
+                    icon={location.id === selectedLocationId ? selectedPinIconAero : getCategoryIcon(location.category)}
                     eventHandlers={{
                         click: () => onMarkerClick && onMarkerClick(location),
                     }}

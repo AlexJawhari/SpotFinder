@@ -51,23 +51,19 @@ const Header = () => {
                 </Link>
 
                 <nav className="flex flex-wrap items-center gap-3 sm:gap-5">
-                    <Link to="/" className="flex items-center gap-2 relative text-slate-800 dark:text-slate-200 hover:text-[#4FC3F7] transition-all px-4 py-2 rounded-xl group hover:shadow-lg" style={{ willChange: 'transform', transform: 'translateZ(0)' }}>
-                        <img src="/assets/icons/aero_icon_locations.png" className="w-9 h-9 object-contain drop-shadow-md group-hover:scale-110 transition-transform" alt="" />
+                    <Link to="/" className="relative text-slate-800 dark:text-slate-200 hover:text-[#4FC3F7] transition-all px-4 py-2.5 rounded-xl hover:bg-white/40 dark:hover:bg-slate-800/40 group border border-transparent hover:border-white/40 hover:shadow-lg" style={{ willChange: 'transform', transform: 'translateZ(0)' }}>
                         <span className="relative z-10 font-bold">Locations</span>
                         <div className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-white/60 to-transparent rounded-t-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
                     </Link>
-                    <Link to="/events" className="flex items-center gap-2 relative text-slate-800 dark:text-slate-200 hover:text-[#4FC3F7] transition-all px-4 py-2 rounded-xl group hover:shadow-lg" style={{ willChange: 'transform', transform: 'translateZ(0)' }}>
-                        <img src="/assets/icons/aero_icon_events.png" className="w-9 h-9 object-contain drop-shadow-md group-hover:scale-110 transition-transform" alt="" />
+                    <Link to="/events" className="relative text-slate-800 dark:text-slate-200 hover:text-[#4FC3F7] transition-all px-4 py-2.5 rounded-xl hover:bg-white/40 dark:hover:bg-slate-800/40 group border border-transparent hover:border-white/40 hover:shadow-lg" style={{ willChange: 'transform', transform: 'translateZ(0)' }}>
                         <span className="relative z-10 font-bold">Events</span>
                         <div className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-white/60 to-transparent rounded-t-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
                     </Link>
-                    <Link to="/community" className="flex items-center gap-2 relative text-slate-800 dark:text-slate-200 hover:text-[#4FC3F7] transition-all px-4 py-2 rounded-xl group hover:shadow-lg" style={{ willChange: 'transform', transform: 'translateZ(0)' }}>
-                        <img src="/assets/icons/aero_icon_community.png" className="w-9 h-9 object-contain drop-shadow-md group-hover:scale-110 transition-transform" alt="" />
+                    <Link to="/community" className="relative text-slate-800 dark:text-slate-200 hover:text-[#4FC3F7] transition-all px-4 py-2.5 rounded-xl hover:bg-white/40 dark:hover:bg-slate-800/40 group border border-transparent hover:border-white/40 hover:shadow-lg" style={{ willChange: 'transform', transform: 'translateZ(0)' }}>
                         <span className="relative z-10 font-bold">Forums</span>
                         <div className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-white/60 to-transparent rounded-t-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
                     </Link>
-                    <Link to="/groups" className="flex items-center gap-2 relative text-slate-800 dark:text-slate-200 hover:text-[#4FC3F7] transition-all px-4 py-2 rounded-xl group hover:shadow-lg" style={{ willChange: 'transform', transform: 'translateZ(0)' }}>
-                        <img src="/assets/icons/aero_icon_groups.png" className="w-9 h-9 object-contain drop-shadow-md group-hover:scale-110 transition-transform" alt="" />
+                    <Link to="/groups" className="relative text-slate-800 dark:text-slate-200 hover:text-[#4FC3F7] transition-all px-4 py-2.5 rounded-xl hover:bg-white/40 dark:hover:bg-slate-800/40 group border border-transparent hover:border-white/40 hover:shadow-lg" style={{ willChange: 'transform', transform: 'translateZ(0)' }}>
                         <span className="relative z-10 font-bold">Groups</span>
                         <div className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-white/60 to-transparent rounded-t-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
                     </Link>

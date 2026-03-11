@@ -30,24 +30,44 @@ const LocationDetailPage = () => {
         const fetchData = async () => {
             setLoading(true);
             try {
-                const [locationData, reviewsData] = await Promise.all([
-                    locationService.getLocation(id),
-                    reviewService.getReviewsForLocation(id),
-                ]);
+                // Determine if this is an external location (e.g., from OSM)
+                const isExternal = String(id).startsWith('osm_');
+                
+                const promises = [locationService.getLocation(id)];
+                
+                // Only fetch internal reviews if it's a database location (UUID)
+                if (!isExternal) {
+                    promises.push(reviewService.getReviewsForLocation(id));
+                } else {
+                    promises.push(Promise.resolve([]));
+                }
+
+                const [locationData, reviewsData] = await Promise.all(promises);
 
                 setLocation(locationData);
                 setReviews(reviewsData);
 
-                // Check if favorited
-                if (isAuthenticated) {
-                    const favorites = await favoriteService.getFavorites();
-                    setIsFavorited(favorites.some(fav => fav.location_id === id));
+                // Check if favorited (only for DB locations)
+                if (isAuthenticated && !isExternal) {
+                    try {
+                        const favorites = await favoriteService.getFavorites();
+                        setIsFavorited(favorites.some(fav => fav.location_id === id));
+                    } catch (favErr) {
+                        console.error('Failed to load favorites:', favErr);
+                    }
                 }
 
-                // Increment view count
-                await locationService.incrementViewCount(id);
+                // Increment view count (only for DB locations)
+                if (!isExternal) {
+                    try {
+                        await locationService.incrementViewCount(id);
+                    } catch (viewErr) {
+                        console.error('Failed to increment view count:', viewErr);
+                    }
+                }
             } catch (error) {
-                toast.error('Failed to load location');
+                console.error('Data fetch error:', error);
+                toast.error('Failed to load location details');
             } finally {
                 setLoading(false);
             }
@@ -181,15 +201,15 @@ const LocationDetailPage = () => {
     return (
         <div className="container mx-auto px-4 py-8 max-w-5xl animate-fadeIn">
             {/* Header / Hero Section */}
-            <div className="mb-8 p-8 rounded-[2.5rem] frosted-glass border-2 border-white/80 shadow-2xl relative overflow-hidden group">
+            <div className="mb-8 p-10 rounded-[3rem] bg-white/95 dark:bg-slate-900/90 backdrop-blur-xl border-2 border-white/60 dark:border-slate-800/60 shadow-2xl relative overflow-hidden group">
                 {/* Aero lens flare effect */}
-                <div className="absolute -top-24 -right-24 w-64 h-64 bg-gradient-radial from-white/30 to-transparent blur-3xl group-hover:scale-110 transition-transform duration-1000"></div>
+                <div className="absolute -top-24 -right-24 w-64 h-64 bg-gradient-radial from-[#38BDF8]/20 to-transparent blur-3xl group-hover:scale-110 transition-transform duration-1000"></div>
                 
                 <div className="relative z-10">
                     <div className="flex justify-between items-start mb-4">
                         <div>
                             <div className="flex items-center gap-3 mb-2">
-                                <span className="text-xs font-bold uppercase tracking-widest bg-gradient-to-r from-blue-500 to-green-500 text-white px-4 py-1.5 rounded-full shadow-inner border border-white/20">
+                                <span className="text-xs font-black uppercase tracking-[0.2em] bg-gradient-to-r from-[#38BDF8] to-[#4ADE80] text-white px-5 py-2 rounded-full shadow-lg border border-white/30">
                                     {location.category}
                                 </span>
                             </div>
@@ -237,7 +257,8 @@ const LocationDetailPage = () => {
                 <div className="lg:col-span-2 space-y-8">
                     
                     {/* Ratings from the Web (Yelp Scraper Result) */}
-                    <div className="p-10 rounded-[2.5rem] glass-gloss relative overflow-hidden">
+                    <div className="p-10 rounded-[3rem] bg-white/95 dark:bg-slate-900/90 backdrop-blur-xl border-2 border-white/60 dark:border-slate-800/60 shadow-xl relative overflow-hidden group">
+                        <div className="absolute -bottom-20 -right-20 w-48 h-48 bg-red-500/5 rounded-full blur-3xl group-hover:scale-110 transition-transform duration-1000"></div>
                         <div className="flex items-center justify-between mb-8">
                             <h3 className="text-2xl font-black text-slate-800 dark:text-white flex items-center gap-3">
                                 <span className="bg-red-500 text-white p-2.5 rounded-2xl text-xs font-black italic shadow-lg">Yelp</span>
@@ -286,8 +307,8 @@ const LocationDetailPage = () => {
                     {location.description && (
                          <div className="relative group">
                             <div className="absolute -inset-1 bg-gradient-to-r from-sky-400 to-green-400 rounded-[2.5rem] blur opacity-20 group-hover:opacity-40 transition duration-1000"></div>
-                            <div className="relative bg-white dark:bg-slate-900/80 backdrop-blur-md p-10 rounded-[2.5rem] border border-white/20 shadow-sm">
-                                <p className="text-slate-700 dark:text-slate-200 leading-relaxed text-2xl font-bold italic tracking-tight">
+                            <div className="relative bg-white/95 dark:bg-slate-900/90 backdrop-blur-xl p-10 rounded-[3rem] border-2 border-white/60 dark:border-slate-800/60 shadow-lg">
+                                <p className="text-slate-700 dark:text-slate-100 leading-relaxed text-2xl font-black italic tracking-tight">
                                     "{location.description}"
                                 </p>
                             </div>
@@ -296,12 +317,12 @@ const LocationDetailPage = () => {
 
                     {/* Photos Gallery */}
                     <div className="space-y-6 pt-4">
-                        <div className="flex justify-between items-center bg-sky-50/50 dark:bg-sky-900/20 p-6 rounded-[2.5rem] border border-sky-100/50 relative overflow-hidden">
+                        <div className="flex justify-between items-center bg-[#F0F9FF] dark:bg-sky-950/30 p-8 rounded-[3rem] border-2 border-white dark:border-slate-800 shadow-lg relative overflow-hidden">
                             {/* Inner gloss */}
-                            <div className="absolute -top-10 -left-10 w-40 h-40 bg-white/20 rounded-full blur-3xl"></div>
+                            <div className="absolute -top-10 -left-10 w-40 h-40 bg-white/40 rounded-full blur-3xl"></div>
                             
                             <h3 className="text-3xl font-black text-slate-800 dark:text-white flex items-center gap-4 relative z-10">
-                                <FaImage className="text-sky-500 drop-shadow-md" /> Photo Gallery
+                                <FaImage className="text-[#38BDF8] drop-shadow-md" /> Photo Gallery
                             </h3>
                             <label className="cursor-pointer group relative z-10">
                                 <input 
@@ -311,13 +332,13 @@ const LocationDetailPage = () => {
                                     onChange={handleFileUpload}
                                     disabled={uploading}
                                 />
-                                <div className={`flex items-center gap-3 px-8 py-3.5 rounded-full transition-all shadow-2xl hover:scale-105 active:scale-95 border-2 
+                                <div className={`flex items-center gap-3 px-8 py-4 rounded-full transition-all shadow-xl hover:scale-105 active:scale-95 border-2 
                                     ${uploading 
                                         ? 'bg-slate-100 text-slate-400 border-white/20' 
-                                        : 'bg-gradient-to-br from-[#7DD3FC] via-[#0EA5E9] to-[#0284C7] text-white border-white/50 shadow-sky-200'
+                                        : 'bg-gradient-to-br from-[#38BDF8] to-[#0EA5E9] text-white border-white/60 shadow-[#38BDF8]/30'
                                     }`}>
                                     {uploading ? <LoadingSpinner size="sm" /> : <FaCamera className="text-xl" />}
-                                    <span className="font-black text-lg tracking-tight">{uploading ? 'Processing...' : 'Add Your Photo'}</span>
+                                    <span className="font-black text-lg tracking-tight">{uploading ? 'Processing...' : 'Upload Photo'}</span>
                                 </div>
                             </label>
                         </div>
