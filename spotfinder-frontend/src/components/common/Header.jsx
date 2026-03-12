@@ -1,11 +1,9 @@
 import { Link } from 'react-router-dom';
-import { FaMapMarkedAlt, FaUser, FaSignOutAlt, FaMoon, FaSun } from 'react-icons/fa';
+import { FaMapMarkedAlt, FaUser, FaSignOutAlt } from 'react-icons/fa';
 import { useAuthStore } from '../../store/authStore';
-import { useThemeStore } from '../../store/themeStore';
 
 const Header = () => {
     const { user, isAuthenticated, logout } = useAuthStore();
-    const { isDarkMode, toggleDarkMode } = useThemeStore();
 
     const handleLogout = () => {
         logout();
@@ -43,11 +41,12 @@ const Header = () => {
                     </span>
                 </Link>
 
-                <nav className="hidden lg:flex items-center space-x-1 bg-slate-50 dark:bg-slate-800/40 p-1 rounded-full border border-slate-100 dark:border-slate-700 shadow-sm">
+                <nav className="hidden lg:flex items-center space-x-1 bg-slate-50 p-1 rounded-full border border-slate-100 shadow-sm">
                     {[
-                        { to: '/', label: 'Explore' },
-                        { to: '/favorites', label: 'Saved' },
-                        { to: '/forum', label: 'Community' },
+                        { to: '/', label: 'Locations' },
+                        { to: '/events', label: 'Events' },
+                        { to: '/community', label: 'Forums' },
+                        { to: '/groups', label: 'Groups' },
                     ].map(({ to, label }) => (
                         <Link
                             key={to}
@@ -55,8 +54,8 @@ const Header = () => {
                             className={`
                                 px-6 py-2 rounded-full font-bold text-sm transition-all duration-300
                                 ${window.location.pathname === to 
-                                    ? 'bg-white dark:bg-slate-700 text-[#38BDF8] shadow-sm' 
-                                    : 'text-slate-500 dark:text-slate-400 hover:text-[#38BDF8] hover:bg-white/40'
+                                    ? 'bg-white text-[#38BDF8] shadow-sm' 
+                                    : 'text-slate-500 hover:text-[#38BDF8] hover:bg-white/40'
                                 }
                             `}
                         >
@@ -66,15 +65,8 @@ const Header = () => {
                 </nav>
 
                 <div className="flex items-center gap-3">
-                    <button
-                        onClick={toggleDarkMode}
-                        className="p-2.5 rounded-full bg-slate-50 dark:bg-slate-800 text-slate-500 hover:text-[#38BDF8] transition-all shadow-sm border border-slate-100 dark:border-slate-700"
-                    >
-                        {isDarkMode ? <FaSun className="text-yellow-400" /> : <FaMoon />}
-                    </button>
-
                     {isAuthenticated ? (
-                        <div className="flex items-center gap-2 pl-2 border-l border-slate-100 dark:border-slate-800">
+                        <div className="flex items-center gap-2 pl-2">
                             <Link
                                 to="/settings"
                                 className="flex items-center gap-2 py-2 px-4 rounded-full hover:bg-slate-50 dark:hover:bg-slate-800 transition-all font-bold text-sm text-slate-700 dark:text-slate-200"
