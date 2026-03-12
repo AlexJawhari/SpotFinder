@@ -8,13 +8,78 @@ import L from 'leaflet';
 import { DEFAULT_MAP_CENTER, MAP_ZOOM } from '../../utils/constants';
 
 // Helper to get icon based on category
+// Helper to get icon based on category
 const getCategoryIcon = (category) => {
-    return L.icon({
-        iconUrl: '/assets/icons/aero_map_marker.png',
-        iconSize: [42, 42],
-        iconAnchor: [21, 42],
-        popupAnchor: [0, -42],
-        className: 'aero-marker-pulse'
+    let emoji = '📍';
+    let color = 'rgba(56, 189, 248, 0.8)'; // blue-500 equivalent
+
+    switch (category?.toLowerCase()) {
+        case 'library': emoji = '📚'; color = 'rgba(139, 92, 246, 0.8)'; break;
+        case 'education': emoji = '🎓'; color = 'rgba(124, 58, 237, 0.8)'; break;
+        case 'park': 
+        case 'leisure': emoji = '🌳'; color = 'rgba(74, 222, 128, 0.8)'; break;
+        case 'cafe':
+        case 'coffee': emoji = '☕'; color = 'rgba(245, 158, 11, 0.8)'; break;
+        case 'restaurant':
+        case 'food': emoji = '🍽️'; color = 'rgba(239, 68, 68, 0.8)'; break;
+        case 'bar':
+        case 'pub':
+        case 'nightlife': emoji = '🍺'; color = 'rgba(168, 85, 247, 0.8)'; break;
+        case 'gym':
+        case 'fitness': emoji = '🏋️'; color = 'rgba(236, 72, 153, 0.8)'; break;
+        case 'coworking':
+        case 'office': emoji = '🏢'; color = 'rgba(100, 116, 139, 0.8)'; break;
+        case 'shop':
+        case 'shopping': emoji = '🛍️'; color = 'rgba(249, 115, 22, 0.8)'; break;
+        case 'pharmacy': emoji = '💊'; color = 'rgba(20, 184, 166, 0.8)'; break;
+        case 'museum': emoji = '🏛️'; color = 'rgba(99, 102, 241, 0.8)'; break;
+        case 'hotel': emoji = '🏨'; color = 'rgba(14, 165, 233, 0.8)'; break;
+        case 'cinema': emoji = '🎬'; color = 'rgba(225, 29, 72, 0.8)'; break;
+        case 'hospital': emoji = '🏥'; color = 'rgba(220, 38, 38, 0.8)'; break;
+        case 'bank': emoji = '🏦'; color = 'rgba(5, 150, 105, 0.8)'; break;
+        case 'gas_station': emoji = '⛽'; color = 'rgba(120, 113, 108, 0.8)'; break;
+        case 'bookstore': emoji = '📖'; color = 'rgba(146, 64, 14, 0.8)'; break;
+        default: emoji = '📍'; color = 'rgba(56, 189, 248, 0.8)';
+    }
+
+    return L.divIcon({
+        className: 'custom-marker-icon',
+        html: `
+            <div style="
+                width: 38px;
+                height: 38px;
+                border-radius: 50%;
+                background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.9), ${color} 60%, rgba(0,0,0,0.1));
+                border: 2px solid rgba(255, 255, 255, 0.8);
+                box-shadow: 0 4px 10px rgba(0,0,0,0.3), inset 0 -4px 8px rgba(0,0,0,0.2), inset 0 4px 8px rgba(255,255,255,0.7);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 20px;
+                backdrop-filter: blur(4px);
+                position: relative;
+            ">
+                <span style="filter: drop-shadow(0 2px 2px rgba(0,0,0,0.5));">${emoji}</span>
+                <!-- Sharp reflection highlight for glass effect -->
+                <div style="
+                    absolute; top: 2px; left: 6px; width: 14px; height: 8px; 
+                    background: linear-gradient(180deg, rgba(255,255,255,0.8), transparent);
+                    border-radius: 50%; pointer-events: none;
+                "></div>
+            </div>
+            <div style="
+                width: 0; 
+                height: 0; 
+                border-left: 8px solid transparent;
+                border-right: 8px solid transparent;
+                border-top: 10px solid ${color};
+                margin: -4px auto 0;
+                filter: drop-shadow(0 4px 2px rgba(0,0,0,0.3));
+            "></div>
+        `,
+        iconSize: [38, 48],
+        iconAnchor: [19, 48],
+        popupAnchor: [0, -48]
     });
 };
 

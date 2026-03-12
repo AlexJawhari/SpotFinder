@@ -1,0 +1,16 @@
+name: Keep Supabase Alive
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # Runs daily at midnight UTC
+  workflow_dispatch: # Allows manual trigger
+
+jobs:
+  ping-backend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping SpotFinder Backend
+        run: |
+          # Change this to your actual deployed backend URL
+          curl -s -X GET "https://spotfinder-backend.onrender.com/api/locations?limit=1" > /dev/null
+          echo "Pinged backend at $(date)"

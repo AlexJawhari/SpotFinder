@@ -96,10 +96,10 @@ function buildBroadOverpassQuery(bboxStr, nameFilter = '') {
  * @param {string} category - Specific category preference (optional)
  * @param {number} lat - Latitude for proximity search (optional)
  * @param {number} lng - Longitude for proximity search (optional)
- * @param {number} radius - Search radius in km (default 10)
+ * @param {number} radius - Search radius in km (default 25)
  * @returns {Promise<Array>} - Array of SpotFinder-formatted location objects
  */
-async function searchExternalLocations(query, category, lat = null, lng = null, radius = 10) {
+async function searchExternalLocations(query, category, lat = null, lng = null, radius = 25) {
     if (!query || query.length < 2) return [];
 
     try {
@@ -169,7 +169,7 @@ async function searchExternalLocations(query, category, lat = null, lng = null, 
             }
 
             const results = transformOverpassResults(data.elements, category)
-                .slice(0, 50);
+                .slice(0, 150); // Increased from 50 to 150
 
             return results;
 
@@ -187,7 +187,7 @@ async function searchExternalLocations(query, category, lat = null, lng = null, 
  * Discover nearby locations from OSM without requiring a text query.
  * This powers the "default map data" experience (Google/Apple Maps-like browsing).
  */
-async function discoverExternalLocations(category, lat, lng, radius = 8) {
+async function discoverExternalLocations(category, lat, lng, radius = 20) {
     if (lat === null || lng === null || Number.isNaN(Number(lat)) || Number.isNaN(Number(lng))) return [];
 
     try {
@@ -236,7 +236,7 @@ async function discoverExternalLocations(category, lat, lng, radius = 8) {
         if (!data.elements || data.elements.length === 0) return [];
 
         const results = transformOverpassResults(data.elements, category)
-            .slice(0, 100);
+            .slice(0, 250); // Increased from 100 to 250
 
         return results;
     } catch (error) {

@@ -387,6 +387,25 @@ const LocationDetailPage = () => {
 
                 {/* Right Column (Sidebar) */}
                 <div className="space-y-8">
+
+                    {/* Hours of Operation Card */}
+                    {location.opening_hours && (
+                        <div className="p-10 rounded-[3rem] bg-white dark:bg-slate-900 border-2 border-slate-50 dark:border-slate-800 shadow-2xl relative overflow-hidden group">
+                             <div className="absolute -top-10 -left-10 w-32 h-32 bg-green-100/30 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-1000"></div>
+                             
+                            <h3 className="text-3xl font-black text-slate-800 dark:text-white mb-8 relative z-10 tracking-tight flex items-center gap-3">
+                                🕒 Hours
+                            </h3>
+                            <div className="grid grid-cols-1 gap-4 relative z-10">
+                                {location.opening_hours.split(';').map((hoursBlock, idx) => (
+                                    <div key={idx} className="flex flex-col p-4 bg-sky-50 dark:bg-slate-800/50 rounded-2xl border border-sky-100 dark:border-slate-700 shadow-sm">
+                                        <span className="font-bold text-slate-700 dark:text-slate-200 text-lg uppercase tracking-wider">{hoursBlock.trim()}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
                     {/* Amenities Sidebar Card */}
                     {location.amenities && location.amenities.length > 0 && (
                         <div className="p-10 rounded-[3rem] bg-white dark:bg-slate-900 border-2 border-slate-50 dark:border-slate-800 shadow-2xl relative overflow-hidden group">
