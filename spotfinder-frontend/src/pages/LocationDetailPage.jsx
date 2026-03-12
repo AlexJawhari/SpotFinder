@@ -199,53 +199,44 @@ const LocationDetailPage = () => {
     const averageRating = location.average_rating || 0;
 
     return (
-        <div className="container mx-auto px-4 py-8 max-w-5xl animate-fadeIn">
+        <div className="container mx-auto px-4 py-12 max-w-5xl animate-fadeIn">
             {/* Header / Hero Section */}
-            <div className="mb-8 p-10 rounded-[3rem] bg-white/95 dark:bg-slate-900/90 backdrop-blur-xl border-2 border-white/60 dark:border-slate-800/60 shadow-2xl relative overflow-hidden group">
-                {/* Aero lens flare effect */}
-                <div className="absolute -top-24 -right-24 w-64 h-64 bg-gradient-radial from-[#38BDF8]/20 to-transparent blur-3xl group-hover:scale-110 transition-transform duration-1000"></div>
-                
+            <div className="mb-12 p-10 rounded-[2.5rem] bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 shadow-xl relative overflow-hidden">
                 <div className="relative z-10">
-                    <div className="flex justify-between items-start mb-4">
-                        <div>
-                            <div className="flex items-center gap-3 mb-2">
-                                <span className="text-xs font-black uppercase tracking-[0.2em] bg-gradient-to-r from-[#38BDF8] to-[#4ADE80] text-white px-5 py-2 rounded-full shadow-lg border border-white/30">
-                                    {location.category}
-                                </span>
-                            </div>
-                            <h1 className="text-5xl font-black text-slate-800 dark:text-white mb-2 tracking-tight drop-shadow-sm">
+                    <div className="flex justify-between items-start mb-6">
+                        <div className="space-y-4">
+                            <span className="inline-block text-[10px] font-black uppercase tracking-[0.2em] bg-sky-50 dark:bg-sky-900/30 text-sky-500 px-6 py-2 rounded-full border border-sky-100 dark:border-sky-800">
+                                {location.category}
+                            </span>
+                            <h1 className="text-6xl font-black text-slate-900 dark:text-white tracking-tighter leading-none">
                                 {location.name}
                             </h1>
-                            <p className="text-slate-500 dark:text-slate-400 flex items-center gap-2 text-lg">
-                                <FaMapMarkerAlt className="text-sky-500" />
+                            <p className="text-slate-500 dark:text-slate-400 flex items-center gap-2 text-xl font-medium">
+                                <FaMapMarkerAlt className="text-sky-400" />
                                 {location.address}, {location.city}
                             </p>
                         </div>
                         <button
                             onClick={handleFavoriteToggle}
-                            className={`p-4 rounded-full shadow-xl transition-all hover:scale-110 active:scale-95 border-2 
+                            className={`p-5 rounded-full transition-all hover:scale-105 active:scale-95 shadow-lg border
                                 ${isFavorited 
-                                    ? 'bg-red-50 border-red-200 text-red-500' 
-                                    : 'bg-white/80 border-white text-slate-400 hover:text-red-400'
+                                    ? 'bg-red-500 border-red-600 text-white shadow-red-200' 
+                                    : 'bg-white dark:bg-slate-800 border-slate-100 dark:border-slate-700 text-slate-300 hover:text-red-500'
                                 }`}
                         >
-                            {isFavorited ? (
-                                <FaHeart className="text-3xl drop-shadow-md" />
-                            ) : (
-                                <FaRegHeart className="text-3xl" />
-                            )}
+                            {isFavorited ? <FaHeart className="text-2xl" /> : <FaRegHeart className="text-2xl" />}
                         </button>
                     </div>
 
-                    <div className="flex flex-wrap items-center gap-6 mt-6">
-                        <div className="flex items-center gap-3 bg-white/40 dark:bg-slate-800/40 backdrop-blur-md px-5 py-3 rounded-2xl border border-white/50">
+                    <div className="flex flex-wrap items-center gap-8 pt-6 border-t border-slate-50 dark:border-slate-800/50">
+                        <div className="flex items-center gap-4">
                             <StarRating rating={averageRating} size="lg" />
-                            <span className="font-bold text-slate-700 dark:text-slate-200 text-xl">
-                                {averageRating.toFixed(1)}
+                            <span className="font-black text-slate-900 dark:text-white text-3xl">
+                                {averageRating > 0 ? averageRating.toFixed(1) : 'New'}
                             </span>
                         </div>
-                        <div className="text-slate-500 dark:text-slate-400 font-medium text-lg">
-                            Based on {reviews.length} community {reviews.length === 1 ? 'review' : 'reviews'}
+                        <div className="text-slate-400 dark:text-slate-500 font-bold text-lg">
+                            {reviews.length} community {reviews.length === 1 ? 'review' : 'reviews'}
                         </div>
                     </div>
                 </div>
@@ -257,74 +248,67 @@ const LocationDetailPage = () => {
                 <div className="lg:col-span-2 space-y-8">
                     
                     {/* Ratings from the Web (Yelp Scraper Result) */}
-                    <div className="p-10 rounded-[3rem] bg-white/95 dark:bg-slate-900/90 backdrop-blur-xl border-2 border-white/60 dark:border-slate-800/60 shadow-xl relative overflow-hidden group">
-                        <div className="absolute -bottom-20 -right-20 w-48 h-48 bg-red-500/5 rounded-full blur-3xl group-hover:scale-110 transition-transform duration-1000"></div>
+                    <div className="p-10 rounded-[2.5rem] bg-slate-50 dark:bg-slate-800/30 border border-slate-100 dark:border-slate-800 relative overflow-hidden group">
                         <div className="flex items-center justify-between mb-8">
-                            <h3 className="text-2xl font-black text-slate-800 dark:text-white flex items-center gap-3">
-                                <span className="bg-red-500 text-white p-2.5 rounded-2xl text-xs font-black italic shadow-lg">Yelp</span>
-                                Ratings from the Web
+                            <h3 className="text-xl font-black text-slate-900 dark:text-white flex items-center gap-3">
+                                <span className="bg-[#FF0000] text-white p-2 px-4 rounded-xl text-[10px] font-black italic">Yelp</span>
+                                External Discovery
                             </h3>
                         </div>
 
                         {loadingExternal ? (
-                            <div className="flex items-center gap-4 py-4 p-6 bg-white/30 dark:bg-slate-800/40 rounded-3xl">
+                            <div className="flex items-center gap-4 py-8 px-10 bg-white/50 dark:bg-slate-900/50 rounded-3xl border border-slate-100 dark:border-white/5 shadow-sm">
                                 <LoadingSpinner size="md" />
-                                <span className="text-slate-500 dark:text-sky-300 font-bold italic animate-pulse">Syncing with external networks...</span>
+                                <span className="text-slate-400 font-bold italic animate-pulse">Syncing data...</span>
                             </div>
                         ) : externalReviews && !externalReviews.error ? (
                             <div className="flex items-center gap-10">
-                                <div className="text-center bg-white/95 dark:bg-slate-800/80 p-8 rounded-[2rem] border-2 border-white shadow-2xl scale-110 ml-2 shadow-sky-100/50 dark:shadow-none">
-                                    <div className="text-5xl font-black text-red-500 mb-1 drop-shadow-sm">{externalReviews.rating || '—'}</div>
-                                    <div className="text-[10px] uppercase font-black text-slate-400 dark:text-slate-500 tracking-[0.2em] mt-1">Stars</div>
+                                <div className="text-center bg-white dark:bg-slate-900 p-10 px-12 rounded-[2rem] shadow-xl border border-slate-50 dark:border-slate-800">
+                                    <div className="text-6xl font-black text-[#FF0000]">{externalReviews.rating || '—'}</div>
+                                    <div className="text-[10px] uppercase font-black text-slate-400 tracking-[0.2em] mt-2">Score</div>
                                 </div>
-                                <div>
-                                    <div className="text-xl font-black text-slate-800 dark:text-slate-100 mb-2">
-                                        {externalReviews.reviewCount ? `${externalReviews.reviewCount}+ Verified Reviews` : 'Found on Yelp'}
+                                <div className="space-y-3">
+                                    <div className="text-2xl font-black text-slate-900 dark:text-white">
+                                        {externalReviews.reviewCount ? `${externalReviews.reviewCount}+ reviews` : 'Found on Yelp'}
                                     </div>
                                     <p className="text-slate-500 dark:text-slate-400 leading-relaxed max-w-sm font-medium">
-                                        We're pulling real-time data from across the web to help you find the absolute best spots in town.
+                                        Cross-referenced data to ensure the best possible community experience.
                                     </p>
                                     {externalReviews.yelpUrl && (
                                         <a 
                                             href={externalReviews.yelpUrl} 
                                             target="_blank" 
                                             rel="noopener noreferrer"
-                                            className="inline-block mt-4 bg-red-500 text-white px-6 py-2 rounded-full font-black hover:bg-red-600 transition-colors shadow-lg shadow-red-200 dark:shadow-none text-sm"
+                                            className="inline-flex items-center gap-2 mt-4 text-[#FF0000] font-black text-sm uppercase tracking-widest hover:translate-x-1 transition-transform"
                                         >
-                                            View Yelp Source
+                                            View Source →
                                         </a>
                                     )}
                                 </div>
                             </div>
                         ) : (
-                            <div className="p-8 bg-white/50 dark:bg-slate-800/50 rounded-3xl text-slate-400 font-bold italic text-center border border-white/40">
-                                {externalReviews?.error || "We couldn't find external ratings for this specific location today."}
+                            <div className="p-10 bg-white/50 dark:bg-slate-900/50 rounded-3xl text-slate-400 font-bold italic text-center border border-slate-100 dark:border-white/5">
+                                {externalReviews?.error || "External data currently unavailable for this location."}
                             </div>
                         )}
                     </div>
 
                     {/* Description Area */}
                     {location.description && (
-                         <div className="relative group">
-                            <div className="absolute -inset-1 bg-gradient-to-r from-sky-400 to-green-400 rounded-[2.5rem] blur opacity-20 group-hover:opacity-40 transition duration-1000"></div>
-                            <div className="relative bg-white/95 dark:bg-slate-900/90 backdrop-blur-xl p-10 rounded-[3rem] border-2 border-white/60 dark:border-slate-800/60 shadow-lg">
-                                <p className="text-slate-700 dark:text-slate-100 leading-relaxed text-2xl font-black italic tracking-tight">
-                                    "{location.description}"
-                                </p>
-                            </div>
+                         <div className="p-12 rounded-[2.5rem] bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 shadow-sm">
+                            <p className="text-slate-700 dark:text-slate-200 leading-relaxed text-3xl font-black tracking-tighter italic">
+                                "{location.description}"
+                            </p>
                          </div>
                     )}
 
                     {/* Photos Gallery */}
-                    <div className="space-y-6 pt-4">
-                        <div className="flex justify-between items-center bg-[#F0F9FF] dark:bg-sky-950/30 p-8 rounded-[3rem] border-2 border-white dark:border-slate-800 shadow-lg relative overflow-hidden">
-                            {/* Inner gloss */}
-                            <div className="absolute -top-10 -left-10 w-40 h-40 bg-white/40 rounded-full blur-3xl"></div>
-                            
-                            <h3 className="text-3xl font-black text-slate-800 dark:text-white flex items-center gap-4 relative z-10">
-                                <FaImage className="text-[#38BDF8] drop-shadow-md" /> Photo Gallery
+                    <div className="space-y-8 pt-8">
+                        <div className="flex justify-between items-center bg-slate-50 dark:bg-slate-800/30 p-8 rounded-[2rem] border border-slate-100 dark:border-slate-800">
+                            <h3 className="text-2xl font-black text-slate-900 dark:text-white flex items-center gap-3">
+                                <FaImage className="text-sky-400" /> Gallery
                             </h3>
-                            <label className="cursor-pointer group relative z-10">
+                            <label className="cursor-pointer group">
                                 <input 
                                     type="file" 
                                     className="hidden" 
@@ -332,31 +316,28 @@ const LocationDetailPage = () => {
                                     onChange={handleFileUpload}
                                     disabled={uploading}
                                 />
-                                <div className={`flex items-center gap-3 px-8 py-4 rounded-full transition-all shadow-xl hover:scale-105 active:scale-95 border-2 
+                                <div className={`flex items-center gap-2 px-6 py-3 rounded-full transition-all border
                                     ${uploading 
-                                        ? 'bg-slate-100 text-slate-400 border-white/20' 
-                                        : 'bg-gradient-to-br from-[#38BDF8] to-[#0EA5E9] text-white border-white/60 shadow-[#38BDF8]/30'
+                                        ? 'bg-slate-100 text-slate-400 border-slate-200' 
+                                        : 'bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-600 hover:bg-slate-50 shadow-sm'
                                     }`}>
-                                    {uploading ? <LoadingSpinner size="sm" /> : <FaCamera className="text-xl" />}
-                                    <span className="font-black text-lg tracking-tight">{uploading ? 'Processing...' : 'Upload Photo'}</span>
+                                    {uploading ? <LoadingSpinner size="sm" /> : <FaCamera className="text-lg" />}
+                                    <span className="font-bold text-sm">{uploading ? 'Uploading...' : 'Add Photo'}</span>
                                 </div>
                             </label>
                         </div>
                         
-                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-8">
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-6">
                             {location.images && location.images.length > 0 ? (
                                 location.images.map((img, index) => (
-                                    <div key={index} className="aspect-square rounded-[2rem] overflow-hidden shadow-2xl border-4 border-white dark:border-slate-800 hover:scale-[1.05] transition-all duration-700 cursor-zoom-in group relative hover:z-10">
+                                    <div key={index} className="aspect-square rounded-[2rem] overflow-hidden border border-slate-100 dark:border-slate-800 hover:scale-[1.02] transition-all duration-500 cursor-zoom-in group shadow-sm">
                                         <img src={img} alt={`${location.name} ${index + 1}`} className="w-full h-full object-cover" />
-                                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-6">
-                                            <span className="text-white font-black text-sm uppercase tracking-widest">Full View</span>
-                                        </div>
                                     </div>
                                 ))
                             ) : (
-                                <div className="col-span-full py-24 bg-white/40 dark:bg-slate-800/40 rounded-[3rem] border-4 border-dashed border-sky-100/50 dark:border-slate-700 flex flex-col items-center justify-center text-slate-300">
-                                    <FaCamera size={80} className="mb-6 opacity-10" />
-                                    <p className="font-black text-2xl italic tracking-tighter opacity-30">The vibe is waiting for your lens...</p>
+                                <div className="col-span-full py-20 bg-slate-50/50 dark:bg-slate-800/20 rounded-[2.5rem] border-2 border-dashed border-slate-200 dark:border-slate-800 flex flex-col items-center justify-center text-slate-300">
+                                    <FaCamera size={48} className="mb-4 opacity-10" />
+                                    <p className="font-bold text-lg opacity-30">No photos yet</p>
                                 </div>
                             )}
                         </div>
@@ -390,16 +371,14 @@ const LocationDetailPage = () => {
 
                     {/* Hours of Operation Card */}
                     {location.opening_hours && (
-                        <div className="p-10 rounded-[3rem] bg-white dark:bg-slate-900 border-2 border-slate-50 dark:border-slate-800 shadow-2xl relative overflow-hidden group">
-                             <div className="absolute -top-10 -left-10 w-32 h-32 bg-green-100/30 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-1000"></div>
-                             
-                            <h3 className="text-3xl font-black text-slate-800 dark:text-white mb-8 relative z-10 tracking-tight flex items-center gap-3">
+                        <div className="p-10 rounded-[2.5rem] bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 shadow-lg relative overflow-hidden group">
+                            <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-6 tracking-tight flex items-center gap-3">
                                 🕒 Hours
                             </h3>
-                            <div className="grid grid-cols-1 gap-4 relative z-10">
+                            <div className="grid grid-cols-1 gap-3 relative z-10">
                                 {location.opening_hours.split(';').map((hoursBlock, idx) => (
-                                    <div key={idx} className="flex flex-col p-4 bg-sky-50 dark:bg-slate-800/50 rounded-2xl border border-sky-100 dark:border-slate-700 shadow-sm">
-                                        <span className="font-bold text-slate-700 dark:text-slate-200 text-lg uppercase tracking-wider">{hoursBlock.trim()}</span>
+                                    <div key={idx} className="flex flex-col p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-700">
+                                        <span className="font-bold text-slate-600 dark:text-slate-300 text-sm uppercase tracking-wider">{hoursBlock.trim()}</span>
                                     </div>
                                 ))}
                             </div>
@@ -408,20 +387,16 @@ const LocationDetailPage = () => {
 
                     {/* Amenities Sidebar Card */}
                     {location.amenities && location.amenities.length > 0 && (
-                        <div className="p-10 rounded-[3rem] bg-white dark:bg-slate-900 border-2 border-slate-50 dark:border-slate-800 shadow-2xl relative overflow-hidden group">
-                             {/* Floating bubble background details */}
-                             <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-sky-100/30 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-1000"></div>
-                             <div className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-slate-50/80 dark:from-slate-800/50 to-transparent pointer-events-none"></div>
-                             
-                            <h3 className="text-3xl font-black text-slate-800 dark:text-white mb-8 relative z-10 tracking-tight">Vibe Checklist</h3>
-                            <div className="grid grid-cols-1 gap-4 relative z-10">
+                        <div className="p-10 rounded-[2.5rem] bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 shadow-lg relative overflow-hidden">
+                            <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-8 tracking-tight">Vibe Checklist</h3>
+                            <div className="grid grid-cols-1 gap-3">
                                 {location.amenities.map((amenity) => (
                                     <div
                                         key={amenity}
-                                        className="flex items-center gap-5 bg-sky-50 dark:bg-sky-900/40 p-5 rounded-3xl border border-sky-100 dark:border-sky-800 group/item hover:bg-sky-100 dark:hover:bg-sky-800 transition-all hover:scale-[1.03] shadow-sm"
+                                        className="flex items-center gap-4 bg-slate-50 dark:bg-slate-800/50 p-5 rounded-2xl border border-slate-100 dark:border-slate-700"
                                     >
-                                        <span className="text-3xl group-hover/item:scale-125 transition-transform duration-300 drop-shadow-sm">{getAmenityIcon(amenity)}</span>
-                                        <span className="font-extrabold text-slate-700 dark:text-slate-100 text-lg capitalize">{amenity}</span>
+                                        <span className="text-2xl">{getAmenityIcon(amenity)}</span>
+                                        <span className="font-bold text-slate-700 dark:text-slate-200 capitalize">{amenity}</span>
                                     </div>
                                 ))}
                             </div>
@@ -429,24 +404,18 @@ const LocationDetailPage = () => {
                     )}
 
                     {/* Interactive Sidebar Section */}
-                    <div className="p-10 rounded-[3rem] bg-gradient-to-br from-sky-400 via-blue-500 to-indigo-600 border border-white/20 shadow-2xl space-y-8 relative overflow-hidden">
-                        {/* Skeuomorphic gloss overlap */}
-                        <div className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-white/30 to-transparent pointer-events-none"></div>
-                        
-                        <div className="relative z-10">
-                            <CheckInButton locationId={id} />
-                        </div>
-                        <div className="relative z-10 pt-8 border-t border-white/20">
+                    <div className="p-10 rounded-[2.5rem] bg-sky-500 shadow-xl shadow-sky-100 dark:shadow-none space-y-6">
+                        <CheckInButton locationId={id} />
+                        <div className="pt-6 border-t border-white/20">
                             <WhoIsHere locationId={id} />
                         </div>
                     </div>
                     
                     {/* Discovery Tips Card */}
-                    <div className="p-10 rounded-[3rem] bg-gradient-to-br from-green-400 to-cyan-500 text-white shadow-2xl relative overflow-hidden group">
-                        <div className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-white/30 to-transparent"></div>
-                        <h4 className="text-2xl font-black mb-4 relative z-10 tracking-tight">Pro Tip</h4>
-                        <p className="font-bold text-white/90 leading-relaxed relative z-10 italic">
-                            Discover hidden gems by exploring the community's photo gallery above!
+                    <div className="p-10 rounded-[2.5rem] bg-emerald-500 text-white shadow-xl shadow-emerald-100 dark:shadow-none">
+                        <h4 className="text-xl font-black mb-2 tracking-tight">Pro Tip</h4>
+                        <p className="font-bold text-white/90 leading-relaxed text-sm">
+                            Discover hidden gems by exploring the community's photo gallery!
                         </p>
                     </div>
                 </div>

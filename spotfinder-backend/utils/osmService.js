@@ -42,13 +42,8 @@ const CATEGORY_MAP = {
     'gym': ['leisure=fitness_centre', 'leisure=sports_centre', 'amenity=gym'],
     'fitness': ['leisure=fitness_centre', 'leisure=sports_centre'],
     'shop': ['shop=supermarket', 'shop=convenience', 'shop=mall', 'shop=department_store'],
-    'pharmacy': ['amenity=pharmacy'],
-    'bank': ['amenity=bank', 'amenity=atm'],
-    'bookstore': ['shop=books'],
-    'gas_station': ['amenity=fuel'],
-    'hospital': ['amenity=hospital', 'amenity=clinic', 'amenity=doctors'],
-    'education': ['amenity=university', 'amenity=college', 'amenity=school'],
-    'museum': ['tourism=museum', 'tourism=gallery'],
+    'museum': ['tourism=museum', 'tourism=gallery', 'tourism=artwork'],
+    'community': ['amenity=community_centre', 'amenity=social_facility', 'amenity=library'],
     'hotel': ['tourism=hotel', 'tourism=motel', 'tourism=hostel'],
     'cinema': ['amenity=cinema', 'amenity=theatre'],
     'other': [],
@@ -76,17 +71,18 @@ function buildOverpassTagQueries(tags, bboxStr, nameFilter = '') {
 function buildBroadOverpassQuery(bboxStr, nameFilter = '') {
     let q = '';
     // Amenities — each filter in its own brackets: ["amenity"~"..."]["name"~"...",i]
-    q += `node["amenity"~"^(cafe|restaurant|fast_food|bar|pub|nightclub|library|coffee_shop|coworking_space|pharmacy|bank|hospital|clinic|fuel|cinema|theatre|university|college)$"]${nameFilter}(${bboxStr});`;
-    q += `way["amenity"~"^(cafe|restaurant|fast_food|bar|pub|nightclub|library|coffee_shop|coworking_space|pharmacy|bank|hospital|clinic|fuel|cinema|theatre|university|college)$"]${nameFilter}(${bboxStr});`;
-    // Leisure
+    // Key Third Space Amenities
+    q += `node["amenity"~"^(cafe|restaurant|fast_food|bar|pub|nightclub|library|coffee_shop|coworking_space|community_centre|cinema|theatre|university|college)$"]${nameFilter}(${bboxStr});`;
+    q += `way["amenity"~"^(cafe|restaurant|fast_food|bar|pub|nightclub|library|coffee_shop|coworking_space|community_centre|cinema|theatre|university|college)$"]${nameFilter}(${bboxStr});`;
+    // Leisure & Nature
     q += `node["leisure"~"^(park|recreation_ground|garden|fitness_centre|sports_centre)$"]${nameFilter}(${bboxStr});`;
     q += `way["leisure"~"^(park|recreation_ground|garden|fitness_centre|sports_centre)$"]${nameFilter}(${bboxStr});`;
-    // Shops (only named ones to keep results useful)
-    q += `node["shop"~"^(supermarket|mall|department_store|books|convenience)$"]${nameFilter}(${bboxStr});`;
+    // Cultural & Community Shops
+    q += `node["shop"~"^(books|mall|department_store)$"]${nameFilter}(${bboxStr});`;
     q += `way["shop"~"^(supermarket|mall|department_store|books|convenience)$"]${nameFilter}(${bboxStr});`;
-    // Tourism
-    q += `node["tourism"~"^(museum|gallery|hotel|motel|hostel)$"]${nameFilter}(${bboxStr});`;
-    q += `way["tourism"~"^(museum|gallery|hotel|motel|hostel)$"]${nameFilter}(${bboxStr});`;
+    // Tourism & Art
+    q += `node["tourism"~"^(museum|gallery|artwork|hotel|hostel)$"]${nameFilter}(${bboxStr});`;
+    q += `way["tourism"~"^(museum|gallery|hotel|hostel)$"]${nameFilter}(${bboxStr});`;
     return q;
 }
 
@@ -471,21 +467,13 @@ function mapOsmCategory(osmType) {
         'department_store': 'shop',
         'convenience': 'shop',
         'books': 'bookstore',
-        'pharmacy': 'pharmacy',
-        'bank': 'bank',
-        'atm': 'bank',
-        'fuel': 'gas_station',
-        'hospital': 'hospital',
-        'clinic': 'hospital',
-        'doctors': 'hospital',
-        'museum': 'museum',
-        'gallery': 'museum',
-        'hotel': 'hotel',
-        'motel': 'hotel',
-        'hostel': 'hotel',
         'cinema': 'cinema',
         'theatre': 'cinema',
         'coworking_space': 'coworking',
+        'community_centre': 'community',
+        'social_facility': 'community',
+        'art_gallery': 'museum',
+        'artwork': 'museum',
     };
     return map[osmType] || 'other';
 }

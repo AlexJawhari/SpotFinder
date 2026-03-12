@@ -201,18 +201,28 @@ const MapView = ({ locations = [], onMarkerClick, center, zoom, selectedLocation
         east: -65.0
     };
 
-    const validLocations = locations.filter(loc => {
-        if (!loc.latitude || !loc.longitude) return false;
+    const validLocations = useMemo(() => {
+        let filtered = locations.filter(loc => {
+            if (!loc.latitude || !loc.longitude) return false;
+            const lat = parseFloat(loc.latitude);
+            const lng = parseFloat(loc.longitude);
+            if (isNaN(lat) || isNaN(lng)) return false;
+            return lat >= US_BBOX.south && lat <= US_BBOX.north &&
+                lng >= US_BBOX.west && lng <= US_BBOX.east;
+        });
 
-        const lat = parseFloat(loc.latitude);
-        const lng = parseFloat(loc.longitude);
-
-        if (isNaN(lat) || isNaN(lng)) return false;
-
-        // Relaxed US check or global check if needed, but keeping US focus for now
-        return lat >= US_BBOX.south && lat <= US_BBOX.north &&
-            lng >= US_BBOX.west && lng <= US_BBOX.east;
-    });
+        // Limit markers for performance (closest to center)
+        if (filtered.length > 80) {
+            filtered = filtered
+                .map(loc => ({
+                    ...loc,
+                    dist: Math.pow(parseFloat(loc.latitude) - mapCenter.lat, 2) + Math.pow(parseFloat(loc.longitude) - mapCenter.lng, 2)
+                }))
+                .sort((a, b) => a.dist - b.dist)
+                .slice(0, 80);
+        }
+        return filtered;
+    }, [locations, mapCenter.lat, mapCenter.lng]);
 
     return (
         <MapContainer
