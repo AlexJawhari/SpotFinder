@@ -404,17 +404,17 @@ const LocationDetailPage = () => {
                     )}
 
                     {/* Interactive Sidebar Section */}
-                    <div className="p-10 rounded-[2.5rem] bg-sky-500 shadow-xl shadow-sky-100 dark:shadow-none space-y-6">
+                    <div className="p-10 rounded-[2.5rem] bg-white border border-slate-100 shadow-lg space-y-6">
                         <CheckInButton locationId={id} />
-                        <div className="pt-6 border-t border-white/20">
+                        <div className="pt-6 border-t border-slate-100">
                             <WhoIsHere locationId={id} />
                         </div>
                     </div>
                     
                     {/* Discovery Tips Card */}
-                    <div className="p-10 rounded-[2.5rem] bg-emerald-500 text-white shadow-xl shadow-emerald-100 dark:shadow-none">
-                        <h4 className="text-xl font-black mb-2 tracking-tight">Pro Tip</h4>
-                        <p className="font-bold text-white/90 leading-relaxed text-sm">
+                    <div className="p-10 rounded-[2.5rem] bg-white border border-slate-100 shadow-lg">
+                        <h4 className="text-xl font-black text-slate-900 mb-2 tracking-tight">Pro Tip</h4>
+                        <p className="font-bold text-slate-500 leading-relaxed text-sm">
                             Discover hidden gems by exploring the community's photo gallery!
                         </p>
                     </div>
