@@ -42,7 +42,7 @@ app.use(
         scriptSrc: ["'self'", "'unsafe-inline'"],
         styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
         imgSrc: ["'self'", 'data:', 'https://*.cloudinary.com', 'https://*.tile.openstreetmap.org'],
-        connectSrc: ["'self'", 'https://*.supabase.co'],
+        connectSrc: ["'self'", 'https://*.supabase.co', 'https://*.onrender.com'],
         fontSrc: ["'self'", 'https://fonts.gstatic.com'],
         objectSrc: ["'none'"],
         upgradeInsecureRequests: [],
