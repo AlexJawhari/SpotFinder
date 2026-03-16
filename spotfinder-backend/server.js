@@ -34,7 +34,60 @@ const PORT = process.env.PORT || 3000;
 const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
 
 // Add sensible security headers (XSS, clickjacking, etc.)
-app.use(helmet());
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "'unsafe-inline'"],
+        styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
+        imgSrc: ["'self'", 'data:', 'https://*.cloudinary.com', 'https://*.tile.openstreetmap.org'],
+        connectSrc: ["'self'", 'https://*.supabase.co'],
+        fontSrc: ["'self'", 'https://fonts.gstatic.com'],
+        objectSrc: ["'none'"],
+        upgradeInsecureRequests: [],
+      },
+    },
+    referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
+  })
+);
+
+// Additional security headers not covered by default helmet
+app.use((req, res, next) => {
+  res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=(self)');
+  res.setHeader('X-XSS-Protection', '1; mode=block');
+  res.removeHeader('X-Powered-By');
+  res.removeHeader('Server');
+  next();
+});
+
+// Middleware to block access to sensitive files and common attack surfaces
+const blockSensitiveFiles = (req, res, next) => {
+  const sensitivePatterns = [
+    /^\/\.env/,
+    /^\/\.git/,
+    /^\/\.htaccess/,
+    /^\/config\.json/,
+    /^\/wp-config\.php/,
+    /^\/package(-lock)?\.json/,
+    /^\/yarn\.lock/,
+    /^\/composer\.(json|lock)/,
+    /^\/Pipfile(\.lock)?/,
+    /^\/requirements\.txt/,
+    /^\/Gemfile\.lock/,
+    /^\/go\.sum/,
+    /^\/node_modules/,
+    /^\/backup\.sql/,
+    /^\/admin/,
+    /^\/debug/,
+  ];
+
+  if (sensitivePatterns.some((pattern) => pattern.test(req.path))) {
+    return res.status(403).json({ error: 'Access denied' });
+  }
+  next();
+};
+app.use(blockSensitiveFiles);
 
 // Only allow requests from the frontend we expect.
 app.use(
@@ -54,8 +107,20 @@ const globalLimiter = rateLimit({
 });
 app.use(globalLimiter);
 
+// Specific rate limiter for authentication routes (prevent brute force)
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5, // Limit each IP to 5 login/register requests per windowMs
+  message: { error: 'Too many authentication attempts, please try again after 15 minutes' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+app.use('/api/auth/login', authLimiter);
+app.use('/api/auth/register', authLimiter);
+
 // Lightweight health check for uptime monitors and sanity checks.
 app.get('/health', (req, res) => {
+  res.removeHeader('Server'); // Double check removal
   res.json({ status: 'ok' });
 });
 

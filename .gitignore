@@ -16,6 +16,13 @@ dist
 .env.development.local
 .env.test.local
 .env.production.local
+.env.*.local
+spotfinder-frontend/.env
+spotfinder-backend/.env
+
+# Local instructions - do not push
+SPOTFINDER_FIXES.md
+
 
 # Logs
 npm-debug.log*
